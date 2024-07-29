@@ -10,7 +10,7 @@ void GoWhere::ToDoThing(World *world)
 
 void Buy::ToDoThing(World *world)
 {
-    // world->buy(get);
+    world->buy();
 }
 Information::Information(std::string name, std::string content) : Thing(name), content{content}
 {

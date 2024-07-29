@@ -2,8 +2,8 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
  * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-07-28 10:02:27
- * @FilePath: \CityLive\include\world\world.h
+ * @LastEditTime: 2024-07-30 07:09:19
+ * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
 #ifndef WORLD_H
@@ -13,11 +13,13 @@
 #include <string>
 #include <vector>
 typedef std::vector<class Thing *> vthing;
-class building;
+class Building;
+class Commodity;
 class Bank;
 class Controller;
 class Thing;
 class View;
+class Health;
 class World {
   public:
     World();
@@ -27,7 +29,8 @@ class World {
     void changewhere(int where);
     void DepositingMoney(int money);
     void WithdrawMoney(int money);
-    int GetLen(building a, building b);
+    int GetLen(Building a, Building b);
+    void buy();
 
   private:
     static World *instance;
@@ -40,17 +43,26 @@ class World {
     int money;
     int where;
     Bank *bank;
+    std::vector<Commodity *> Commodities;
     std::vector<std::string> BuildingNames;
-    std::vector<building> buildings;
+    std::vector<Building> Buildings;
     std::vector<vthing> ToDoThings;
 };
-class building {
+class Building {
   public:
-    building() {}
-    building(int id, int x, int y, std::string name) : id{id}, x{x}, y{y}, name{name} {}
+    Building() {}
+    Building(int id, int x, int y, std::string name) : id{id}, x{x}, y{y}, name{name} {}
     int x;
     int y;
     int id;
     std::string name;
+};
+
+class Commodity {
+  public:
+    Commodity() {}
+    Commodity(std::string name, int price) : name{name}, price{price} {}
+    std::string name;
+    int price;
 };
 #endif // WORLD_H
