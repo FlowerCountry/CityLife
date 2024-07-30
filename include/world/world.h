@@ -2,14 +2,13 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
  * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-07-30 07:09:19
+ * @LastEditTime: 2024-07-30 08:34:53
  * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
 #ifndef WORLD_H
 #define WORLD_H
 
-#include <iostream>
 #include <string>
 #include <vector>
 typedef std::vector<class Thing *> vthing;
@@ -61,8 +60,9 @@ class Building {
 class Commodity {
   public:
     Commodity() {}
-    Commodity(std::string name, int price) : name{name}, price{price} {}
+    Commodity(std::string name, int price, Health *health) : name{name}, price{price}, health{health} {}
     std::string name;
     int price;
+    Health *health;
 };
 #endif // WORLD_H
