@@ -2,8 +2,8 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-28 10:08:56
  * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-07-28 10:46:36
- * @FilePath: \CityLive\src\center\center.cpp
+ * @LastEditTime: 2024-08-31 07:00:41
+ * @FilePath: \CityLife\src\center\center.cpp
  */
 #include "center/center.h"
 #include "view/view.h"
@@ -36,9 +36,10 @@ Center *Center::getInstance()
 
 void Center::PrintAnnouncement(World *world)
 {
+    int count = 0;
     for (auto &i : announcement)
     {
-        View::getInstance()->print(i, '\n');
+        View::getInstance()->print(count++, i);
     }
     getchar();
 }

@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
  * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-07-30 08:34:53
+ * @LastEditTime: 2024-08-30 19:30:26
  * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
@@ -11,12 +11,12 @@
 
 #include <string>
 #include <vector>
-typedef std::vector<class Thing *> vthing;
+typedef std::vector<class Object *> vobject;
 class Building;
 class Commodity;
 class Bank;
 class Controller;
-class Thing;
+class Object;
 class View;
 class Health;
 class World {
@@ -36,16 +36,17 @@ class World {
     /**
      * 0表示市中央
      * 1表示超市
-     * 2表示银行
+     * 2表示银行f
      */
     int year, month, day, hour, minute, second;
     int money;
     int where;
+    float LifeQuality = 1.0;
     Bank *bank;
-    std::vector<Commodity *> Commodities;
+    std::vector<Object *> Commodities;
     std::vector<std::string> BuildingNames;
-    std::vector<Building> Buildings;
-    std::vector<vthing> ToDoThings;
+    std::vector<Building *> Buildings;
+    std::vector<vobject> ToDoThings;
 };
 class Building {
   public:
@@ -57,12 +58,4 @@ class Building {
     std::string name;
 };
 
-class Commodity {
-  public:
-    Commodity() {}
-    Commodity(std::string name, int price, Health *health) : name{name}, price{price}, health{health} {}
-    std::string name;
-    int price;
-    Health *health;
-};
 #endif // WORLD_H

@@ -1,3 +1,10 @@
+/*
+ * @Author: FlowerCity admin@flowercity.xyz
+ * @Date: 2024-07-28 10:07:19
+ * @LastEditors: FlowerCity admin@flowercity.xyz
+ * @LastEditTime: 2024-08-27 20:49:44
+ * @FilePath: \CityLife\include\center\center.h
+ */
 #pragma once
 #ifndef CENTER_H
 #define CENTER_H
