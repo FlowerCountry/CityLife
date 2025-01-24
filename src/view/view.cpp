@@ -1,8 +1,8 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:21:42
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-31 07:37:38
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-24 14:25:49
  * @FilePath: \CityLife\src\view\view.cpp
  */
 #include "view/view.h"
@@ -36,17 +36,19 @@ void View::print(int line, const std::string str, int addpos)
 int View::scan()
 {
     int f = 1, k = 0;
-    char c = getchar();
+    char c = getch();
     while (c < '0' || c > '9')
     {
         if (c == '-')
+        {
             f = -1;
-        c = getchar();
+        }
+        c = getch();
     }
     while (c >= '0' && c <= '9')
     {
-        k = (k << 1) + (k << 3) + (c ^ 48);
-        c = getchar();
+        k = (k << 1) + (k << 3) + (c - '0');
+        c = getch();
     }
     return f * k;
 }
