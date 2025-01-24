@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:21:42
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 14:25:49
+ * @LastEditTime: 2025-01-24 21:15:36
  * @FilePath: \CityLife\src\view\view.cpp
  */
 #include "view/view.h"
@@ -28,13 +28,25 @@ View *View::getInstance()
 void View::print(int line, const std::string str, int addpos)
 {
     move(line, addpos);
-    clrtoeol();
+    printw("%-*s", 100, "");
+    move(line, addpos);
     printw("%s", str.c_str());
     refresh();
 }
 
-int View::scan()
+void View::print(int line, int value, int addpos)
 {
+    move(line, addpos);
+    printw("%-*s", 100, "");
+    move(line, addpos);
+    printw("%d", value);
+    refresh();
+}
+
+int View::scan(int line, int addpos)
+{
+    move(line, addpos);
+    clrtoeol();
     int f = 1, k = 0;
     char c = getch();
     while (c < '0' || c > '9')
@@ -47,8 +59,10 @@ int View::scan()
     }
     while (c >= '0' && c <= '9')
     {
+        addch(c);
         k = (k << 1) + (k << 3) + (c - '0');
         c = getch();
     }
+    refresh();
     return f * k;
 }

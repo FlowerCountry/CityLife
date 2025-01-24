@@ -1,15 +1,14 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 08:56:57
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-30 19:50:34
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-24 21:50:56
  * @FilePath: \CityLife\include\object\object.h
  */
 #pragma once
-#include "health/health.h"
-#ifndef THING_H
-#define THING_H
 
+#include <algorithm>
+#include <curses.h>
 #include <functional>
 #include <map>
 #include <string>
@@ -76,4 +75,3 @@ class Commodity : public Object {
     int price;
     std::vector<Health *> health;
 };
-#endif
