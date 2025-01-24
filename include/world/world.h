@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 15:15:48
+ * @LastEditTime: 2025-01-24 21:59:12
  * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
@@ -24,8 +24,9 @@ class World {
     static World *getInstance();
     void start();
     void changewhere(int where);
-    void DepositingMoney(int money);
-    void WithdrawMoney(int money);
+    bool SpendMoney(int money);
+    bool DepositingMoney(int money);
+    bool WithdrawMoney(int money);
     int GetLen(Building a, Building b);
 
   private:

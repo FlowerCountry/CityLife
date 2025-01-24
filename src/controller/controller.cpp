@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:33:32
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 21:16:39
+ * @LastEditTime: 2025-01-24 21:27:55
  * @FilePath: \CityLife\src\controller\controller.cpp
  */
 #include "controller/controller.h"
@@ -29,10 +29,6 @@ Controller *Controller::getInstance()
     }
     return instance;
 }
-
-#include <curses.h>
-#include <string>
-#include <vector>
 
 int Controller::choose(std::string str, std::vector<Object *> options)
 {

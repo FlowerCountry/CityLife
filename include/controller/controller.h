@@ -7,8 +7,10 @@
  */
 #pragma once
 
+#include <curses.h>
 #include <string>
 #include <vector>
+
 class Object;
 class View;
 class World;

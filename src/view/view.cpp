@@ -34,6 +34,15 @@ void View::print(int line, const std::string str, int addpos)
     refresh();
 }
 
+void View::print(int line, int value, int addpos)
+{
+    move(line, addpos);
+    printw("%-*s", 100, "");
+    move(line, addpos);
+    printw("%d", value);
+    refresh();
+}
+
 int View::scan(int line, int addpos)
 {
     move(line, addpos);

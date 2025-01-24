@@ -2,12 +2,12 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 08:56:57
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 21:21:19
+ * @LastEditTime: 2025-01-24 21:50:56
  * @FilePath: \CityLife\include\object\object.h
  */
 #pragma once
-#include "health/health.h"
 
+#include <algorithm>
 #include <curses.h>
 #include <functional>
 #include <map>
@@ -69,11 +69,7 @@ class WithdrawMoney : public Object {
 
 class Commodity : public Object {
   public:
-    Commodity(std::string name, int price, std::vector<Health *> health) : Object{name}, price{price}, health{health}
-    {
-        for (auto *it : health) delete it;
-        health.clear();
-    }
+    Commodity(std::string name, int price, std::vector<Health *> health) : Object{name}, price{price}, health{health} {}
     void ToDoIt(World *world) override;
     std::string GetInfo() override { return name + " " + std::to_string(price) + "$"; }
     int price;
