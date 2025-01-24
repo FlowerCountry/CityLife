@@ -1,13 +1,11 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-30 19:30:26
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-24 15:15:48
  * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
-#ifndef WORLD_H
-#define WORLD_H
 
 #include <string>
 #include <vector>
@@ -29,21 +27,14 @@ class World {
     void DepositingMoney(int money);
     void WithdrawMoney(int money);
     int GetLen(Building a, Building b);
-    void buy();
 
   private:
     static World *instance;
-    /**
-     * 0表示市中央
-     * 1表示超市
-     * 2表示银行f
-     */
     int year, month, day, hour, minute, second;
     int money;
     int where;
     float LifeQuality = 1.0;
     Bank *bank;
-    std::vector<Object *> Commodities;
     std::vector<std::string> BuildingNames;
     std::vector<Building *> Buildings;
     std::vector<vobject> ToDoThings;
@@ -57,5 +48,3 @@ class Building {
     int id;
     std::string name;
 };
-
-#endif // WORLD_H

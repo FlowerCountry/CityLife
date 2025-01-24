@@ -6,8 +6,6 @@
  * @FilePath: \CityLife\include\controller\controller.h
  */
 #pragma once
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
 
 #include <string>
 #include <vector>
@@ -24,5 +22,3 @@ class Controller {
   private:
     static Controller *instance;
 };
-
-#endif // CONTROLLER_H

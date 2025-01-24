@@ -1,8 +1,8 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 09:42:34
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-31 07:00:04
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-24 15:23:48
  * @FilePath: \CityLife\src\object\object.cpp
  */
 #include "object/object.h"
@@ -18,7 +18,7 @@ void GoWhere::ToDoIt(World *world)
 
 void Buy::ToDoIt(World *world)
 {
-    world->buy();
+    world->changewhere(3);
 }
 Information::Information(std::string name, std::string content) : Object(name), content{content}
 {
@@ -30,17 +30,22 @@ void Information::ToDoIt(World *world)
 }
 void DepositingMoney::ToDoIt(World *world)
 {
-    View::getInstance()->print(0, "请输入你要存的钱:");
-    int money = View::getInstance()->scan();
+    clear();
+    refresh();
+    View::getInstance()->print(0, "请输入你要存的钱:", 0);
+    int money = View::getInstance()->scan(0, 17);
     world->DepositingMoney(money);
 }
 void WithdrawMoney::ToDoIt(World *world)
 {
-    View::getInstance()->print(0, "请输入你要取的钱:");
-    int money = View::getInstance()->scan();
+    clear();
+    refresh();
+    View::getInstance()->print(0, "请输入你要取的钱:", 0);
+    int money = View::getInstance()->scan(0, 17);
     world->WithdrawMoney(money);
 }
 
 void Commodity::ToDoIt(World *world)
 {
+    world->changewhere(1);
 }

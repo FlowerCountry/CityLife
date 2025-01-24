@@ -6,8 +6,6 @@
  * @FilePath: \CityLive\include\bank\bank.h
  */
 #pragma once
-#ifndef BANK_H
-#define BANK_H
 
 class Bank {
   public:
@@ -24,5 +22,3 @@ class Bank {
   private:
     int money;
 };
-
-#endif

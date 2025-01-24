@@ -6,8 +6,6 @@
  * @FilePath: \CityLife\include\health\health.h
  */
 #pragma once
-#ifndef HEALTH_H
-#define HEALTH_H
 
 #include <string>
 
@@ -23,5 +21,3 @@ class Health {
     std::string name;
     int reserves;
 };
-
-#endif

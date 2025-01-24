@@ -41,7 +41,7 @@ void Center::PrintAnnouncement(World *world)
     {
         View::getInstance()->print(count++, i);
     }
-    getchar();
+    getch();
 }
 
 void Center::InsertStringRandomly(std::vector<std::string> &vec, const std::string &str)
