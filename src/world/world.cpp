@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:40:49
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 13:09:25
+ * @LastEditTime: 2025-01-25 14:11:31
  * @FilePath: \CityLife\src\world\world.cpp
  */
 #include "world/world.h"
@@ -104,7 +104,7 @@ void World::start()
     while (true)
     {
         int choose = Controller::getInstance()->choose("你当前位于: " + BuildingNames[where], ToDoThings[where]);
-        ToDoThings[where][choose]->ToDoIt(this);
+        ToDoThings[where][choose]->ToDoIt();
         clear();
         refresh();
     }

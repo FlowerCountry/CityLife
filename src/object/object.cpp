@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 09:42:34
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 13:22:12
+ * @LastEditTime: 2025-01-25 14:11:01
  * @FilePath: \CityLife\src\object\object.cpp
  */
 #include "object/object.h"
@@ -11,49 +11,49 @@
 #include "user/user.h"
 #include "view/view.h"
 #include "world/world.h"
-#include <string>
 
-void GoWhere::ToDoIt(World *world)
+void GoWhere::ToDoIt()
 {
-    world->changewhere(this->to);
+
+    World::getInstance()->changewhere(this->to);
 }
 
-void Buy::ToDoIt(World *world)
+void Buy::ToDoIt()
 {
-    world->changewhere(3);
+    World::getInstance()->changewhere(3);
 }
 Information::Information(std::string name, std::string content) : Object(name), content{content}
 {
     things["公告"] = std::bind(&Center::PrintAnnouncement, Center::getInstance(), std::placeholders::_1);
 }
-void Information::ToDoIt(World *world)
+void Information::ToDoIt()
 {
-    things[content](world);
+    things[content](World::getInstance());
 }
-void DepositingMoney::ToDoIt(World *world)
+void DepositingMoney::ToDoIt()
 {
     clear();
     refresh();
     View::getInstance()->print(0, "请输入你要存的钱:", 0);
     int money = View::getInstance()->scan(0, 17);
-    world->DepositingMoney(money);
+    World::getInstance()->DepositingMoney(money);
 }
-void WithdrawMoney::ToDoIt(World *world)
+void WithdrawMoney::ToDoIt()
 {
     clear();
     refresh();
     View::getInstance()->print(0, "请输入你要取的钱:", 0);
     int money = View::getInstance()->scan(0, 17);
-    world->WithdrawMoney(money);
+    World::getInstance()->WithdrawMoney(money);
 }
 
 Commodity::Commodity(std::string name, int price, std::vector<Health> health) : Object{name}, price{price}, health{health} {}
 
 std::vector<Health> Commodity::GetHealth() { return health; }
 
-void Commodity::ToDoIt(World *world)
+void Commodity::ToDoIt()
 {
-    if (world->SpendMoney(price))
+    if (World::getInstance()->SpendMoney(price))
     {
         for (auto i : health)
         {
@@ -68,5 +68,5 @@ void Commodity::ToDoIt(World *world)
         }
         getch();
     }
-    world->changewhere(1);
+    World::getInstance()->changewhere(1);
 }
