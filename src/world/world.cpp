@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:40:49
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 14:11:31
+ * @LastEditTime: 2025-01-25 15:08:36
  * @FilePath: \CityLife\src\world\world.cpp
  */
 #include "world/world.h"
@@ -50,7 +50,7 @@ World::World()
     ToDoThings = {
         {new class Information("查看公告", "公告")},
         {new class Buy("购买物品")},
-        {new class DepositingMoney("存钱"), new class WithdrawMoney("取钱")},
+        {new class DepositingMoney(), new class WithdrawMoney()},
         {new class Commodity("面包", 15, {Health("饱腹感", 18), Health("饥饿", 18), Health("蛋白质", 9), Health("维生素B", 9)}),
          new class Commodity("牛奶", 25, {Health("饱腹感", 10), Health("饥饿", 16), Health("钙", 24), Health("蛋白质", 14), Health("维生素A", 12)}),
          new class Commodity("蛋糕", 40, {Health("饱腹感", 24), Health("饥饿", 10), Health("糖分", 30), Health("脂肪", 20), Health("维生素E", 14)}),
@@ -152,7 +152,8 @@ bool World::WithdrawMoney(int money)
 {
     if (bank->GetMoney() >= money)
     {
-        this->money += bank->WithdrawMoney(money);
+        this->money += money;
+        bank->WithdrawMoney(money);
         return true;
     }
     else

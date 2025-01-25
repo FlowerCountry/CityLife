@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 09:42:34
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 14:11:01
+ * @LastEditTime: 2025-01-25 15:18:15
  * @FilePath: \CityLife\src\object\object.cpp
  */
 #include "object/object.h"
@@ -14,7 +14,6 @@
 
 void GoWhere::ToDoIt()
 {
-
     World::getInstance()->changewhere(this->to);
 }
 
@@ -24,11 +23,11 @@ void Buy::ToDoIt()
 }
 Information::Information(std::string name, std::string content) : Object(name), content{content}
 {
-    things["公告"] = std::bind(&Center::PrintAnnouncement, Center::getInstance(), std::placeholders::_1);
+    things["公告"] = std::bind(&Center::PrintAnnouncement, Center::getInstance());
 }
 void Information::ToDoIt()
 {
-    things[content](World::getInstance());
+    things[content]();
 }
 void DepositingMoney::ToDoIt()
 {
