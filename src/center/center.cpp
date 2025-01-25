@@ -1,8 +1,8 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-28 10:08:56
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-31 07:00:41
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-25 15:10:35
  * @FilePath: \CityLife\src\center\center.cpp
  */
 #include "center/center.h"
@@ -34,7 +34,7 @@ Center *Center::getInstance()
     return instance;
 }
 
-void Center::PrintAnnouncement(World *world)
+void Center::PrintAnnouncement()
 {
     int count = 0;
     for (auto &i : announcement)

@@ -1,8 +1,15 @@
 /*
+ * @Author: FlowerCity qzrobotsnake@gmail.com
+ * @Date: 2024-07-26 08:56:57
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-25 15:36:09
+ * @FilePath: \CityLife\include\object\object.h
+ */
+/*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 08:56:57
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 13:22:05
+ * @LastEditTime: 2025-01-25 14:26:03
  * @FilePath: \CityLife\include\object\object.h
  */
 #pragma once
@@ -16,19 +23,44 @@
 class World;
 class Center;
 class Health;
-typedef std::function<void(World *)> VoidFunction;
+typedef std::function<void()> VoidFunction;
 class Object {
   public:
+    /**
+     * @description: 事件基类初始化
+     * @param {string} name 事件名称
+     * @return null
+     */
     Object(std::string name) : name{name} {}
+    /**
+     * @description: 事件基类虚构函数
+     * @return null
+     */
     virtual ~Object() {}
+    /**
+     * @description: 获取事件信息
+     * @return null
+     */
     virtual std::string GetInfo() { return name; }
-    virtual void ToDoIt(World *world) {}
+    /**
+     * @description: 去做当前事件
+     * @return null
+     */
+    virtual void ToDoIt() {}
     std::string name;
 };
 class GoWhere : public Object {
   public:
+    /**
+     * @description: 去别地事件构造函数
+     * @param {string} name 事件名称
+     * @param {int} from 来源地
+     * @param {int} to 目标地
+     * @param {int} hungry 消耗的饥饿值
+     * @return null
+     */
     GoWhere(std::string name, int from, int to, int hungry) : Object(name), from{from}, to{to}, hungry{hungry} {}
-    void ToDoIt(World *world) override;
+    void ToDoIt() override;
 
   private:
     int from;
@@ -37,15 +69,26 @@ class GoWhere : public Object {
 };
 class Buy : public Object {
   public:
+    /**
+     * @description: 购买物品事件构造函数
+     * @param {string} name 所购买的物品名称
+     * @return null
+     */
     Buy(std::string name) : Object(name) {}
-    void ToDoIt(World *world) override;
+    void ToDoIt() override;
 
   private:
 };
 class Information : public Object {
   public:
+    /**
+     * @description: 公告事件构造函数
+     * @param {string} name 公告名称
+     * @param {string} content 公告内容
+     * @return null
+     */
     Information(std::string name, std::string content);
-    void ToDoIt(World *world) override;
+    void ToDoIt() override;
 
   private:
     std::string content;
@@ -53,23 +96,43 @@ class Information : public Object {
 };
 class DepositingMoney : public Object {
   public:
-    DepositingMoney(std::string name) : Object(name) {}
-    void ToDoIt(World *world) override;
+    /**
+     * @description: 存钱事件构造函数
+     * @return null
+     */
+    DepositingMoney() : Object("存钱") {}
+    void ToDoIt() override;
 
   private:
 };
 class WithdrawMoney : public Object {
   public:
-    WithdrawMoney(std::string name) : Object(name) {}
-    void ToDoIt(World *world) override;
+    /**
+     * @description: 取钱事件构造函数
+     * @return null
+     */
+    WithdrawMoney() : Object("取钱") {}
+    void ToDoIt() override;
 
   private:
 };
 class Commodity : public Object {
   public:
+    /**
+     * @description: 商品构造函数
+     * @param {string} name 商品名称
+     * @param {int} price 商品价格
+     * @param {vector<Health>} health 商品所含营养
+     * @return null
+     */
     Commodity(std::string name, int price, std::vector<Health> health);
-    void ToDoIt(World *world) override;
+    void ToDoIt() override;
     std::string GetInfo() override { return name + " " + std::to_string(price) + "$"; }
+
+    /**
+     * @description: 返回商品所含营养
+     * @return {*} 商品所含营养
+     */
     std::vector<Health> GetHealth();
 
   private:

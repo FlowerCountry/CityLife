@@ -16,9 +16,27 @@ class View;
 class World;
 class Controller {
   public:
+    /**
+     * @description: 控制类的构造函数
+     * @return null
+     */
     Controller();
+    /**
+     * @description: 控制类的析构函数
+     * @return null
+     */
     ~Controller();
+    /**
+     * @description: 返回控制类的单例对象
+     * @return {*} 控制类的单例对象
+     */
     static Controller *getInstance();
+    /**
+     * @description: 基本的选择函数
+     * @param {string} str 整个内容的标题
+     * @param {vector<class Object *>} options 选项
+     * @return {*} 最终选了什么, 值为下标
+     */
     int choose(std::string str, std::vector<class Object *> options);
 
   private:
