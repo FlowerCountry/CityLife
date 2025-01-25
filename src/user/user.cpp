@@ -6,7 +6,6 @@
  * @FilePath: \CityLife\src\user\user.cpp
  */
 #include "user/user.h"
-#include "health/health.h"
 
 User::User()
 {
