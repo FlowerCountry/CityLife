@@ -1,8 +1,8 @@
 /*
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:32:47
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-08-30 21:14:52
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-01-26 10:58:19
  * @FilePath: \CityLife\include\controller\controller.h
  */
 #pragma once
@@ -38,6 +38,7 @@ class Controller {
      * @return {*} 最终选了什么, 值为下标
      */
     int choose(std::string str, std::vector<class Object *> options);
+    void PrintInfromathin(int line, int addpos, std::vector<std::string> content);
 
   private:
     static Controller *instance;
