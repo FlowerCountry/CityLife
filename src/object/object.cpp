@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-26 09:42:34
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 15:18:15
+ * @LastEditTime: 2025-01-26 11:02:15
  * @FilePath: \CityLife\src\object\object.cpp
  */
 #include "object/object.h"
@@ -33,7 +33,7 @@ void DepositingMoney::ToDoIt()
 {
     clear();
     refresh();
-    View::getInstance()->print(0, "请输入你要存的钱:", 0);
+    View::getInstance()->print(0, 0, "请输入你要存的钱:");
     int money = View::getInstance()->scan(0, 17);
     World::getInstance()->DepositingMoney(money);
 }
@@ -41,7 +41,7 @@ void WithdrawMoney::ToDoIt()
 {
     clear();
     refresh();
-    View::getInstance()->print(0, "请输入你要取的钱:", 0);
+    View::getInstance()->print(0, 0, "请输入你要取的钱:");
     int money = View::getInstance()->scan(0, 17);
     World::getInstance()->WithdrawMoney(money);
 }
@@ -60,10 +60,10 @@ void Commodity::ToDoIt()
         }
         clear();
         int st = 0;
-        View::getInstance()->print(st, "购买" + name + "成功");
+        View::getInstance()->print(st, 0, "购买" + name + "成功");
         for (auto i : health)
         {
-            View::getInstance()->print(++st, i.GetInfo() + "达到了" + std::to_string((*User::getInstance()->GetUserHealth())[i.GetInfo()]));
+            View::getInstance()->print(++st, 0, i.GetInfo() + "达到了" + std::to_string((*User::getInstance()->GetUserHealth())[i.GetInfo()]));
         }
         getch();
     }

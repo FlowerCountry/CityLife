@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:40:49
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 15:08:36
+ * @LastEditTime: 2025-01-26 11:06:18
  * @FilePath: \CityLife\src\world\world.cpp
  */
 #include "world/world.h"
@@ -21,12 +21,6 @@ World::World()
     setlocale(LC_ALL, "");
     cbreak();
     noecho();
-    for (int i = 0; i < 10; i++)
-    {
-        move(i, 0);
-        printw("%-*s", 100, "");
-    }
-    refresh();
     year = 2010;
     month = 10;
     day = 10;
@@ -103,9 +97,9 @@ void World::start()
 {
     while (true)
     {
+        clear();
         int choose = Controller::getInstance()->choose("你当前位于: " + BuildingNames[where], ToDoThings[where]);
         ToDoThings[where][choose]->ToDoIt();
-        clear();
         refresh();
     }
 }
@@ -125,7 +119,7 @@ bool World::SpendMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, "你没有这么多的钱", 0);
+        View::getInstance()->print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }
@@ -142,7 +136,7 @@ bool World::DepositingMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, "你没有这么多的钱", 0);
+        View::getInstance()->print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }
@@ -159,7 +153,7 @@ bool World::WithdrawMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, "你没有这么多的钱", 0);
+        View::getInstance()->print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }

@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:21:42
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 21:15:36
+ * @LastEditTime: 2025-01-26 11:00:20
  * @FilePath: \CityLife\src\view\view.cpp
  */
 #include "view/view.h"
@@ -25,7 +25,7 @@ View *View::getInstance()
     return instance;
 }
 
-void View::print(int line, const std::string str, int addpos)
+void View::print(int line, int addpos, const std::string str)
 {
     move(line, addpos);
     printw("%-*s", 100, "");
