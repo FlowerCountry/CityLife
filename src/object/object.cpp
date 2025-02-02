@@ -21,7 +21,7 @@ void Buy::ToDoIt()
 {
     World::GetInstance()->ChangeWhere(3);
 }
-Information::Information(std::string name, std::string content) : Object(name), content{content}
+Information::Information(const std::string &name, const std::string &content) : Object(name), content{content}
 {
     things["公告"] = std::bind(&Center::PrintAnnouncement, Center::GetInstance());
 }
@@ -46,7 +46,7 @@ void WithdrawMoney::ToDoIt()
     World::GetInstance()->WithdrawMoney(money);
 }
 
-Commodity::Commodity(std::string name, int price, std::vector<Health> health) : Object{name}, price{price}, health{health} {}
+Commodity::Commodity(const std::string &name, const int &price, const std::vector<Health> &health) : Object{name}, price{price}, health{health} {}
 
 std::vector<Health> Commodity::GetHealth() { return health; }
 
