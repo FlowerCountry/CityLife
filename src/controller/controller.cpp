@@ -23,7 +23,7 @@ Controller::~Controller()
 
 Controller *Controller::instance = nullptr;
 
-Controller *Controller::getInstance()
+Controller *Controller::GetInstance()
 {
     if (instance == nullptr)
     {
@@ -32,21 +32,21 @@ Controller *Controller::getInstance()
     return instance;
 }
 
-int Controller::choose(std::string str, std::vector<Object *> options)
+int Controller::Choose(std::string str, std::vector<Object *> options)
 {
     int now = 0, ch = 0, length = options.size();
     int windowSize = 12;
     do
     {
         clear();
-        View::getInstance()->print(0, 0, str);
+        View::GetInstance()->Print(0, 0, str);
         for (int i = (length <= windowSize ? 0 : (now - windowSize / 2 + length) % length), count = 0; count < (length <= windowSize ? length : windowSize); i = (i + 1) % length, count++)
         {
             if (i == now)
-                View::getInstance()->print(count + 1, 0, "> ");
+                View::GetInstance()->Print(count + 1, 0, "> ");
             else
-                View::getInstance()->print(count + 1, 0, "  ");
-            View::getInstance()->print(count + 1, 2, options[i]->GetInfo().c_str());
+                View::GetInstance()->Print(count + 1, 0, "  ");
+            View::GetInstance()->Print(count + 1, 2, options[i]->GetInfo().c_str());
         }
         refresh();
         ch = getch();
@@ -62,7 +62,7 @@ void Controller::PrintInfromathin(int line, int addpos, std::vector<std::string>
 {
     for (int i = 0; i < content.size(); i++)
     {
-        View::getInstance()->print(line + i, addpos, content[i]);
+        View::GetInstance()->Print(line + i, addpos, content[i]);
     }
     getch();
 }

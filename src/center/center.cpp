@@ -24,7 +24,7 @@ Center::~Center()
 
 Center *Center::instance = nullptr;
 
-Center *Center::getInstance()
+Center *Center::GetInstance()
 {
     if (instance == nullptr)
     {
@@ -35,7 +35,7 @@ Center *Center::getInstance()
 
 void Center::PrintAnnouncement()
 {
-    Controller::getInstance()->PrintInfromathin(0, 0, announcement);
+    Controller::GetInstance()->PrintInfromathin(0, 0, announcement);
 }
 
 void Center::InsertStringRandomly(std::vector<std::string> &vec, const std::string &str)

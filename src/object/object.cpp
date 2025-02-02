@@ -14,16 +14,16 @@
 
 void GoWhere::ToDoIt()
 {
-    World::getInstance()->changewhere(this->to);
+    World::GetInstance()->ChangeWhere(this->to);
 }
 
 void Buy::ToDoIt()
 {
-    World::getInstance()->changewhere(3);
+    World::GetInstance()->ChangeWhere(3);
 }
 Information::Information(std::string name, std::string content) : Object(name), content{content}
 {
-    things["公告"] = std::bind(&Center::PrintAnnouncement, Center::getInstance());
+    things["公告"] = std::bind(&Center::PrintAnnouncement, Center::GetInstance());
 }
 void Information::ToDoIt()
 {
@@ -33,17 +33,17 @@ void DepositingMoney::ToDoIt()
 {
     clear();
     refresh();
-    View::getInstance()->print(0, 0, "请输入你要存的钱:");
-    int money = View::getInstance()->scan(0, 17);
-    World::getInstance()->DepositingMoney(money);
+    View::GetInstance()->Print(0, 0, "请输入你要存的钱:");
+    int money = View::GetInstance()->Scan(0, 17);
+    World::GetInstance()->DepositingMoney(money);
 }
 void WithdrawMoney::ToDoIt()
 {
     clear();
     refresh();
-    View::getInstance()->print(0, 0, "请输入你要取的钱:");
-    int money = View::getInstance()->scan(0, 17);
-    World::getInstance()->WithdrawMoney(money);
+    View::GetInstance()->Print(0, 0, "请输入你要取的钱:");
+    int money = View::GetInstance()->Scan(0, 17);
+    World::GetInstance()->WithdrawMoney(money);
 }
 
 Commodity::Commodity(std::string name, int price, std::vector<Health> health) : Object{name}, price{price}, health{health} {}
@@ -52,20 +52,20 @@ std::vector<Health> Commodity::GetHealth() { return health; }
 
 void Commodity::ToDoIt()
 {
-    if (World::getInstance()->SpendMoney(price))
+    if (World::GetInstance()->SpendMoney(price))
     {
         for (auto i : health)
         {
-            (*User::getInstance()->GetUserHealth())[i.GetInfo()] = std::min((*User::getInstance()->GetUserHealth())[i.GetInfo()] + i.GetReserves(), 100);
+            (*User::GetInstance()->GetUserHealth())[i.GetInfo()] = std::min((*User::GetInstance()->GetUserHealth())[i.GetInfo()] + i.GetReserves(), 100);
         }
         clear();
         int st = 0;
-        View::getInstance()->print(st, 0, "购买" + name + "成功");
+        View::GetInstance()->Print(st, 0, "购买" + name + "成功");
         for (auto i : health)
         {
-            View::getInstance()->print(++st, 0, i.GetInfo() + "达到了" + std::to_string((*User::getInstance()->GetUserHealth())[i.GetInfo()]));
+            View::GetInstance()->Print(++st, 0, i.GetInfo() + "达到了" + std::to_string((*User::GetInstance()->GetUserHealth())[i.GetInfo()]));
         }
         getch();
     }
-    World::getInstance()->changewhere(1);
+    World::GetInstance()->ChangeWhere(1);
 }
