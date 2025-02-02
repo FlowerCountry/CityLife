@@ -1,8 +1,15 @@
 /*
  * @Author: FlowerCity qzrobotsnake@gmail.com
+ * @Date: 2025-01-25 14:03:39
+ * @LastEditors: FlowerCity qzrobotsnake@gmail.com
+ * @LastEditTime: 2025-02-02 20:00:43
+ * @FilePath: \CityLife\include\user\user.h
+ */
+/*
+ * @Author: FlowerCity qzrobotsnake@gmail.com
  * @Date: 2025-01-24 21:20:49
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-02-02 19:42:58
+ * @LastEditTime: 2025-02-02 20:00:27
  * @FilePath: \CityLife\include\user\user.h
  */
 #pragma once

@@ -25,7 +25,7 @@ View *View::GetInstance()
     return instance;
 }
 
-void View::Print(int line, int addpos, const std::string str)
+void View::Print(const int &line, const int &addpos, const std::string &str)
 {
     move(line, addpos);
     printw("%-*s", 100, "");
@@ -34,7 +34,7 @@ void View::Print(int line, int addpos, const std::string str)
     refresh();
 }
 
-int View::Scan(int line, int addpos)
+int View::Scan(const int &line, const int &addpos)
 {
     move(line, addpos);
     clrtoeol();

@@ -32,7 +32,7 @@ Controller *Controller::GetInstance()
     return instance;
 }
 
-int Controller::Choose(std::string str, std::vector<Object *> options)
+int Controller::Choose(const std::string &str, const std::vector<Object *> &options)
 {
     int now = 0, ch = 0, length = options.size();
     int windowSize = 12;
@@ -58,7 +58,7 @@ int Controller::Choose(std::string str, std::vector<Object *> options)
     return now;
 }
 
-void Controller::PrintInfromathin(int line, int addpos, std::vector<std::string> content)
+void Controller::PrintInfromathin(const int &line, const int &addpos, const std::vector<std::string> &content)
 {
     for (int i = 0; i < content.size(); i++)
     {

@@ -17,7 +17,7 @@ class Health {
      * @param {int} reserves 对应的数值, 百分比
      * @return null
      */
-    Health(std::string name, int reserves) : name{name}, reserves{reserves} {}
+    Health(const std::string &name, const int &reserves) : name{name}, reserves{reserves} {}
     /**
      * @description: 返回营养名称
      * @return {*} 营养名称

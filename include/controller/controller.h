@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:32:47
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-26 10:58:19
+ * @LastEditTime: 2025-02-02 20:09:43
  * @FilePath: \CityLife\include\controller\controller.h
  */
 #pragma once
@@ -37,8 +37,8 @@ class Controller {
      * @param {vector<class Object *>} options 选项
      * @return {*} 最终选了什么, 值为下标
      */
-    int Choose(std::string str, std::vector<class Object *> options);
-    void PrintInfromathin(int line, int addpos, std::vector<std::string> content);
+    int Choose(const std::string &str, const std::vector<class Object *> &options);
+    void PrintInfromathin(const int &line, const int &addpos, const std::vector<std::string> &content);
 
   private:
     static Controller *instance;

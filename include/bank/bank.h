@@ -30,13 +30,13 @@ class Bank {
      * @param {int} money 存的数额
      * @return null
      */
-    void DepositingMoney(int money) { this->money += money; }
+    void DepositingMoney(const int &money) { this->money += money; }
     /**
      * @description: 取钱
      * @param {int} money
      * @return null
      */
-    void WithdrawMoney(int money) { this->money -= money; }
+    void WithdrawMoney(const int &money) { this->money -= money; }
 
   private:
     int money;
