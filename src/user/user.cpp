@@ -33,7 +33,7 @@ User::~User() {}
 
 User *User::instance = nullptr;
 
-User *User::getInstance()
+User *User::GetInstance()
 {
     if (instance == nullptr)
     {

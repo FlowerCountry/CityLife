@@ -16,7 +16,7 @@ View::~View()
 {
 }
 View *View::instance = nullptr;
-View *View::getInstance()
+View *View::GetInstance()
 {
     if (instance == nullptr)
     {
@@ -25,7 +25,7 @@ View *View::getInstance()
     return instance;
 }
 
-void View::print(int line, int addpos, const std::string str)
+void View::Print(int line, int addpos, const std::string str)
 {
     move(line, addpos);
     printw("%-*s", 100, "");
@@ -34,7 +34,7 @@ void View::print(int line, int addpos, const std::string str)
     refresh();
 }
 
-int View::scan(int line, int addpos)
+int View::Scan(int line, int addpos)
 {
     move(line, addpos);
     clrtoeol();

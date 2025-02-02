@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:39:31
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-24 21:59:12
+ * @LastEditTime: 2025-02-02 19:44:21
  * @FilePath: \CityLife\include\world\world.h
  */
 #pragma once
@@ -33,18 +33,18 @@ class World {
      * @description: 返回世界类单例对象
      * @return {*} 世界类单例对象
      */
-    static World *getInstance();
+    static World *GetInstance();
     /**
      * @description: 游戏开始
      * @return null
      */
-    void start();
+    void Start();
     /**
      * @description: 更改位置
      * @param {int} where 目标位置
      * @return null
      */
-    void changewhere(int where);
+    void ChangeWhere(int where);
     /**
      * @description: 花钱
      * @param {int} money 花的钱数

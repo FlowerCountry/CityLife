@@ -8,6 +8,6 @@
 #include "world/world.h"
 int main()
 {
-    World::getInstance()->start();
+    World::GetInstance()->Start();
     return 0;
 }

@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-25 18:40:49
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-26 11:06:18
+ * @LastEditTime: 2025-01-31 16:04:04
  * @FilePath: \CityLife\src\world\world.cpp
  */
 #include "world/world.h"
@@ -80,11 +80,18 @@ World::World()
 }
 World::~World()
 {
+    endwin();
+    delete bank;
+    for (auto it : Buildings) delete it;
+    for (auto &list : ToDoThings)
+    {
+        for (auto item : list) delete item;
+    }
 }
 
 World *World::instance = nullptr;
 
-World *World::getInstance()
+World *World::GetInstance()
 {
     if (instance == nullptr)
     {
@@ -93,18 +100,18 @@ World *World::getInstance()
     return instance;
 }
 
-void World::start()
+void World::Start()
 {
     while (true)
     {
         clear();
-        int choose = Controller::getInstance()->choose("你当前位于: " + BuildingNames[where], ToDoThings[where]);
+        int choose = Controller::GetInstance()->Choose("你当前位于: " + BuildingNames[where], ToDoThings[where]);
         ToDoThings[where][choose]->ToDoIt();
         refresh();
     }
 }
 
-void World::changewhere(int where)
+void World::ChangeWhere(int where)
 {
     this->where = where;
 }
@@ -119,7 +126,7 @@ bool World::SpendMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, 0, "你没有这么多的钱");
+        View::GetInstance()->Print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }
@@ -136,7 +143,7 @@ bool World::DepositingMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, 0, "你没有这么多的钱");
+        View::GetInstance()->Print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }
@@ -153,7 +160,7 @@ bool World::WithdrawMoney(int money)
     else
     {
         clear();
-        View::getInstance()->print(0, 0, "你没有这么多的钱");
+        View::GetInstance()->Print(0, 0, "你没有这么多的钱");
         getch();
         return false;
     }

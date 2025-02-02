@@ -2,7 +2,7 @@
  * @Author: FlowerCity admin@flowercity.xyz
  * @Date: 2024-07-28 10:07:19
  * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 15:35:44
+ * @LastEditTime: 2025-02-02 19:44:44
  * @FilePath: \CityLife\include\center\center.h
  */
 #pragma once
@@ -31,7 +31,7 @@ class Center {
      * @description: 返回市中心的单例对象
      * @return {*} 市中心的单例对象
      */
-    static Center *getInstance();
+    static Center *GetInstance();
     /**
      * @description: 显示公告
      * @return null
