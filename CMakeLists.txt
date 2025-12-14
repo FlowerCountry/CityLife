@@ -1,9 +1,5 @@
 # 设置最低的编译版本
-cmake_minimum_required(VERSION 3.30)
-
-# 设置目标平台与标准库文件
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --target=x86_64-w64-mingw32 -stdlib=libstdc++")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --target=x86_64-w64-mingw32 -stdlib=libstdc++")
+cmake_minimum_required(VERSION 3.10)
 
 # 项目名称
 project(CityFife)
@@ -12,11 +8,8 @@ project(CityFife)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 11)
 
-# 头文件路径
-INCLUDE_DIRECTORIES(
-    "./include/"
-    "C:/Users/FlowerCity/CityLife/PDCurses-3.9" # 添加PDCurses头文件路径
-)
+# 公共头文件目录
+include_directories("./include/")
 
 # 枚举头文件
 file(GLOB_RECURSE INCLUDES "./include/*.h" "./include/*.hpp")
@@ -29,11 +22,27 @@ file(GLOB_RECURSE SOURCES "./src/*.c" "./src/*.cpp")
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin) # 设置二进制文件存放路径
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/firmware) # 设置各种库存放路径
 
-# 添加需要链接的库文件目录 新建好了 链接的时候用
-LINK_DIRECTORIES(${LIBRARY_OUTPUT_PATH} "C:/Users/FlowerCity/CityLife/PDCurses-3.9/wincon")
-
 # 生成可执行文件
 add_executable(main ${SOURCES})
 
-# 链接PDCurses库
-target_link_libraries(main pdcurses.a)
+# ==================== 单元测试支持 ====================
+option(BUILD_TESTS "Build unit tests" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+
+    # 使用 FetchContent 自动下载 GoogleTest
+    include(FetchContent)
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        v1.14.0
+    )
+    # 不安装 gtest 到系统
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+
+    # 添加单元测试子目录
+    add_subdirectory(tests/unit)
+endif()

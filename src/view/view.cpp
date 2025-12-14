@@ -1,12 +1,10 @@
-/*
- * @Author: FlowerCity admin@flowercity.xyz
- * @Date: 2024-07-25 18:21:42
- * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-26 11:00:20
- * @FilePath: \CityLife\src\view\view.cpp
- */
 #include "view/view.h"
-#include "curses.h"
+
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 View::View()
 {
@@ -25,35 +23,58 @@ View *View::GetInstance()
     return instance;
 }
 
-void View::Print(const int &line, const int &addpos, const std::string &str)
+void View::Print(const int &line, const int &addpos, const std::string &str, bool newline)
 {
-    move(line, addpos);
-    printw("%-*s", 100, "");
-    move(line, addpos);
-    printw("%s", str.c_str());
-    refresh();
+    (void)line;
+    if (addpos > 0)
+    {
+        std::cout << std::string(static_cast<std::size_t>(addpos), ' ');
+    }
+    if (newline)
+    {
+        std::cout << str << std::endl;
+        return;
+    }
+    std::cout << str << std::flush;
 }
 
 int View::Scan(const int &line, const int &addpos)
 {
-    move(line, addpos);
-    clrtoeol();
-    int f = 1, k = 0;
-    char c = getch();
-    while (c < '0' || c > '9')
+    (void)line;
+    (void)addpos;
+    while (true)
     {
-        if (c == '-')
+        std::string buffer;
+        if (!std::getline(std::cin, buffer))
         {
-            f = -1;
+            throw std::runtime_error("INPUT_EOF");
         }
-        c = getch();
+        std::stringstream ss(buffer);
+        int value = 0;
+        char extra = '\0';
+        if (ss >> value && !(ss >> extra))
+        {
+            std::cout << std::endl;
+            return value;
+        }
+        std::cout << "输入无效，请输入一个整数: " << std::flush;
     }
-    while (c >= '0' && c <= '9')
+}
+
+void View::Clear()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+void View::WaitForEnter()
+{
+    int ch = std::getchar();
+    if (ch == EOF)
     {
-        addch(c);
-        k = (k << 1) + (k << 3) + (c - '0');
-        c = getch();
+        throw std::runtime_error("INPUT_EOF");
     }
-    refresh();
-    return f * k;
 }

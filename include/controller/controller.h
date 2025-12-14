@@ -7,7 +7,6 @@
  */
 #pragma once
 
-#include <curses.h>
 #include <string>
 #include <vector>
 
@@ -38,7 +37,7 @@ class Controller {
      * @return {*} 最终选了什么, 值为下标
      */
     int Choose(const std::string &str, const std::vector<class Object *> &options);
-    void PrintInfromathin(const int &line, const int &addpos, const std::vector<std::string> &content);
+    void PrintInformation(const int &line, const int &addpos, const std::vector<std::string> &content);
 
   private:
     static Controller *instance;

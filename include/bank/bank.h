@@ -1,10 +1,3 @@
-/*
- * @Author: FlowerCity admin@flowercity.xyz
- * @Date: 2024-07-26 10:16:44
- * @LastEditors: FlowerCity admin@flowercity.xyz
- * @LastEditTime: 2024-07-28 09:41:53
- * @FilePath: \CityLive\include\bank\bank.h
- */
 #pragma once
 
 class Bank {
@@ -24,7 +17,7 @@ class Bank {
      * @description: 获取银行余额
      * @return {*} 银行余额
      */
-    int GetMoney() { return money; }
+    int GetMoney() const { return money; }
     /**
      * @description: 存钱
      * @param {int} money 存的数额
@@ -37,6 +30,12 @@ class Bank {
      * @return null
      */
     void WithdrawMoney(const int &money) { this->money -= money; }
+    /**
+     * @description: 直接设置银行余额（用于存档加载）
+     * @param {int} amount 余额
+     * @return null
+     */
+    void SetMoney(int amount) { money = amount; }
 
   private:
     int money;

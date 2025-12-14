@@ -33,7 +33,7 @@ class View {
      * @param {int} addpos 列数, 第几列
      * @return null
      */
-    void Print(const int &line, const int &addpos, const std::string &str);
+    void Print(const int &line, const int &addpos, const std::string &str, bool newline = true);
     /**
      * @description: 读入内容
      * @param {int} line 行数, 第几行
@@ -41,6 +41,16 @@ class View {
      * @return {*} 输入的内容
      */
     int Scan(const int &line, const int &addpos);
+
+    /**
+     * @description: 清屏
+     */
+    void Clear();
+
+    /**
+     * @description: 等待用户回车
+     */
+    void WaitForEnter();
 
   private:
     static View *instance;

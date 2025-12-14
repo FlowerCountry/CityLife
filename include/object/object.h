@@ -1,20 +1,6 @@
-/*
- * @Author: FlowerCity qzrobotsnake@gmail.com
- * @Date: 2024-07-26 08:56:57
- * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-02-02 20:13:07
- * @FilePath: \CityLife\include\object\object.h
- */
-/*
- * @Author: FlowerCity admin@flowercity.xyz
- * @Date: 2024-07-26 08:56:57
- * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-01-25 14:26:03
- * @FilePath: \CityLife\include\object\object.h
- */
 #pragma once
 
-#include <curses.h>
+#include <array>
 #include <functional>
 #include <map>
 #include <string>
@@ -24,6 +10,12 @@ class World;
 class Center;
 class Health;
 typedef std::function<void()> VoidFunction;
+enum class EventCategory
+{
+    Primary = 0,
+    Insight,
+    Navigation
+};
 class Object {
   public:
     /**
@@ -47,6 +39,11 @@ class Object {
      * @return null
      */
     virtual void ToDoIt() {}
+    /**
+     * @description: 返回事件分类
+     * @return {*} 事件分类
+     */
+    virtual EventCategory GetCategory() const { return EventCategory::Insight; }
     std::string name;
 };
 class GoWhere : public Object {
@@ -61,6 +58,7 @@ class GoWhere : public Object {
      */
     GoWhere(const std::string &name, const int &from, const int &to, const int &hungry) : Object(name), from{from}, to{to}, hungry{hungry} {}
     void ToDoIt() override;
+    EventCategory GetCategory() const override;
 
   private:
     int from;
@@ -76,6 +74,7 @@ class Buy : public Object {
      */
     Buy(const std::string &name) : Object(name) {}
     void ToDoIt() override;
+    EventCategory GetCategory() const override;
 
   private:
 };
@@ -89,6 +88,7 @@ class Information : public Object {
      */
     Information(const std::string &name, const std::string &content);
     void ToDoIt() override;
+    EventCategory GetCategory() const override;
 
   private:
     std::string content;
@@ -102,6 +102,7 @@ class DepositingMoney : public Object {
      */
     DepositingMoney() : Object("存钱") {}
     void ToDoIt() override;
+    EventCategory GetCategory() const override;
 
   private:
 };
@@ -113,6 +114,31 @@ class WithdrawMoney : public Object {
      */
     WithdrawMoney() : Object("取钱") {}
     void ToDoIt() override;
+    EventCategory GetCategory() const override;
+
+  private:
+};
+class CheckCash : public Object {
+  public:
+    /**
+     * @description: 查看随身现金事件构造函数
+     * @return null
+     */
+    CheckCash() : Object("查看身上现金") {}
+    void ToDoIt() override;
+    EventCategory GetCategory() const override;
+
+  private:
+};
+class CheckBankBalance : public Object {
+  public:
+    /**
+     * @description: 查看银行余额事件构造函数
+     * @return null
+     */
+    CheckBankBalance() : Object("查看账户余额") {}
+    void ToDoIt() override;
+    EventCategory GetCategory() const override;
 
   private:
 };
@@ -128,6 +154,7 @@ class Commodity : public Object {
     Commodity(const std::string &name, const int &price, const std::vector<Health> &health);
     void ToDoIt() override;
     std::string GetInfo() override { return name + " " + std::to_string(price) + "$"; }
+    EventCategory GetCategory() const override;
 
     /**
      * @description: 返回商品所含营养
@@ -138,4 +165,37 @@ class Commodity : public Object {
   private:
     int price;
     std::vector<Health> health;
+};
+
+class SaveGame : public Object {
+  public:
+    /**
+     * @description: 保存游戏事件构造函数
+     * @return null
+     */
+    SaveGame() : Object("保存游戏") {}
+    void ToDoIt() override;
+    EventCategory GetCategory() const override;
+};
+
+class LoadGame : public Object {
+  public:
+    /**
+     * @description: 读取存档事件构造函数
+     * @return null
+     */
+    LoadGame() : Object("读取存档") {}
+    void ToDoIt() override;
+    EventCategory GetCategory() const override;
+};
+
+class SeeDoctor : public Object {
+  public:
+    /**
+     * @description: 看病事件构造函数
+     * @return null
+     */
+    SeeDoctor() : Object("看病") {}
+    void ToDoIt() override;
+    EventCategory GetCategory() const override;
 };

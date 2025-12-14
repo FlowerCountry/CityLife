@@ -1,10 +1,3 @@
-/*
- * @Author: FlowerCity admin@flowercity.xyz
- * @Date: 2024-07-28 10:08:56
- * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-02-02 20:09:13
- * @FilePath: \CityLife\src\center\center.cpp
- */
 #include "center/center.h"
 #include "controller/controller.h"
 
@@ -35,7 +28,7 @@ Center *Center::GetInstance()
 
 void Center::PrintAnnouncement()
 {
-    Controller::GetInstance()->PrintInfromathin(0, 0, announcement);
+    Controller::GetInstance()->PrintInformation(0, 0, announcement);
 }
 
 void Center::InsertStringRandomly(std::vector<std::string> &vec, const std::string &str)

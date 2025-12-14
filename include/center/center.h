@@ -1,15 +1,7 @@
-/*
- * @Author: FlowerCity admin@flowercity.xyz
- * @Date: 2024-07-28 10:07:19
- * @LastEditors: FlowerCity qzrobotsnake@gmail.com
- * @LastEditTime: 2025-02-02 20:08:51
- * @FilePath: \CityLife\include\center\center.h
- */
 #pragma once
 
 #include <cstdlib>
 #include <ctime>
-#include <curses.h>
 #include <string>
 #include <vector>
 
