@@ -5,156 +5,189 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
-# Configure project
-cmake -S . -B build
+# Build executable (outputs to bin/citylife)
+make build
 
-# Build executable (outputs to bin/main)
-cmake --build build
+# Run the game
+make run
 
-# Run manually
-./bin/main
+# Run unit tests
+make test
+
+# Format code
+make fmt
+
+# Run go vet
+make vet
+
+# Cross-platform builds (Linux/macOS/Windows)
+make build-all
 ```
 
 ## Test Commands
 
 ```bash
-# Basic automated test (recommended for daily regression)
+# Run all unit tests
+make test
+
+# Run integration tests
 ./tests/run_test.sh
 
-# Manual test mode with file I/O
-./bin/main --test tests/automated_input.txt tests/automated_output.txt
-
-# Boundary test (extreme inputs, edge cases)
-./bin/main --test tests/boundary_input.txt tests/boundary_output.txt
+# Test mode with file I/O
+./bin/citylife --test tests/input/basic_test.txt tests/output/output.txt
 ```
 
-**Testing Notes:**
-- Center announcements are randomized on each run; test assertions must filter or ignore announcement lines
-- `TestModule::ConfigureFileIO` redirects stdin/stdout when `--test` flag is present
-- Without `--test`, the program runs with ncurses interactive mode
-- Input EOF triggers a `runtime_error("INPUT_EOF")` which exits gracefully (exit code 0)
+**Test Scenarios (run_test.sh):**
+- Basic functionality, navigation, shopping, bank operations
+- Payment system, save/load, health, hospital, medicine
 
 ## Architecture Overview
 
-### Core Loop: `main → World::Start → Controller::Choose → Object::ToDoIt`
+### Core Loop: `main → tea.Program → ui.Model → action.Execute`
 
 **Execution Flow:**
-1. **Entry** (`src/main.cpp`): Checks for `--test [input] [output]` CLI args, configures TestModule if present, then calls `World::GetInstance()->Start()`
-2. **World Loop** (`src/world/world.cpp`): Infinite loop that calls controller to get player choice at current location (`where`), then executes corresponding `Object::ToDoIt()`
-3. **Controller** (`src/controller/controller.cpp`): Renders menu options, validates input, returns selected index
-4. **Object Dispatch** (`src/object/object.cpp`): Each action is a subclass of `Object` with its own `ToDoIt()` implementation
+1. **Entry** (`cmd/citylife/main.go`): Initializes path manager, parses args, creates game state
+2. **UI Loop** (`internal/ui/model.go`): Bubble Tea event loop handles keyboard input and renders UI
+3. **Actions** (`internal/action/`): Each action implements the Action interface with `Execute()` and `Info()`
+4. **State** (`internal/game/state.go`): Aggregates World, User, Nutrition, and Disease managers
 
 ### Data Flow & Ownership
 
-**Singletons (Global State):**
-- `World`: Owns time, money, bank, location (`where`), all buildings, and action lists (`ToDoThings`)
-- `Controller`: Renders menus and validates choices
-- `View`: Single point for all I/O (`Print`/`Scan`/`Clear`/`WaitForEnter`)
-- `User`: Stores health metrics (hunger, protein, vitamins, etc.), all initialized to 100
+**Game State (Composition Pattern):**
+- `game.State`: Aggregates all game systems
+  - `World`: Time, money, wallet, bank, location management
+  - `User`: 20+ nutrition attributes
+  - `Nutrition`: Decay rules and interactions
+  - `Disease`: 6 disease types with triggers and cures
 
-**Buildings & Actions:**
-- `World::Buildings`: Vector of `Building*` representing locations (city center, market, bank, market interior)
-- `World::ToDoThings`: 2D vector mapping location ID to available `Object*` actions
-- Actions include: `GoWhere` (travel), `Buy` (enter market), `Information` (view announcements), `DepositingMoney`/`WithdrawMoney`, `Commodity` (purchase item)
-
-**Key Pattern: Dynamic Action Generation**
-- `ToDoThings` combines static actions (e.g., view announcements, bank operations) with dynamically generated "Go to X" actions based on location combinations
-- Each location gets a set of actions; `Controller::Choose` renders them as numbered options
+**Key Packages:**
+- `internal/world/`: Time, money, buildings, wallet (6 denominations)
+- `internal/user/`: Nutrition management
+- `internal/action/`: Action interface and implementations (GoWhere, Commodity, Banking, Medical, Save/Load)
+- `internal/ui/`: Bubble Tea UI model
+- `internal/food/`: 20+ food items with nutrition effects
+- `internal/medicine/`: OTC and prescription medicines
+- `internal/checkup/`: Medical checkup packages
+- `internal/disease/`: Disease triggers, symptoms, treatments
+- `internal/save/`: JSON-based save/load system
+- `internal/path/`: Cross-platform path management (~/.citylife/)
 
 ### Critical Design Decisions
 
-**1. All I/O Centralized in `View` Singleton**
-- Rationale: Enables easy UI replacement (console → ncurses → GUI) without touching game logic
-- Implementation: `View::Print` uses `std::cout`, `View::Scan` loops until valid integer, `View::WaitForEnter` blocks on `std::getchar()`
+**1. Bubble Tea UI Framework**
+- TUI rendering handled by charmbracelet/bubbletea
+- Model-Update-View pattern
+- Keyboard navigation: 1-9 for menu items, arrows for scrolling
 
-**2. Object-Based Action Dispatch**
-- Rationale: Each action is self-contained; no giant switch statements
-- Pattern: `Object` base class with `virtual void ToDoIt()` and `virtual std::string GetInfo()`
-- Derived classes: `GoWhere`, `Buy`, `Information`, `DepositingMoney`, `WithdrawMoney`, `Commodity`
+**2. Action Interface Pattern**
+- All actions implement `Action` interface with `Execute()`, `Info()`, `Category()`
+- Categories: Primary (shopping, banking), Insight (view status), Navigation (movement)
+- Actions sorted by category in menus
 
-**3. Money Operations Return `bool` for Transaction Validation**
-- `World::SpendMoney(int)`: Checks `money >= amount`, returns false on failure
-- `World::DepositingMoney(int)`: Deducts from `money`, adds to `bank`, returns false if insufficient funds
-- `World::WithdrawMoney(int)`: Checks bank balance, transfers to `money`, returns false if insufficient
-- On failure, caller must handle UI feedback (typically `View::Print` + `View::WaitForEnter`)
+**3. Wallet System (6 Denominations)**
+- 1, 5, 10, 20, 50, 100 yuan notes
+- Greedy payment algorithm with change calculation
+- `World.GetWalletTotal()`, `World.SpendMoney()`, `World.AddMoney()`
 
-**4. TestModule Redirects stdio for Automation**
-- `ConfigureFileIO(input_path, output_path)` replaces `stdin`/`stdout` with files
-- If input file missing, creates it with a single `0` to provide default value for `View::Scan`
-- `AppendLog` writes to current stdout for test markers
+**4. Save System (JSON)**
+- 3 save slots stored in `~/.citylife/saves/`
+- Serializes game state including World, User, Disease status
+
+**5. Test Mode**
+- `--test [input] [output]` redirects I/O for automation
+- Input format: `enter`, `up`, `down`, `1-9`, `q` commands
 
 ## File Structure
 
 ```
-src/
-├── main.cpp              # Entry point, TestModule setup
-├── world/world.cpp       # Game loop, time/money/location management
-├── controller/controller.cpp  # Menu rendering and input validation
-├── view/view.cpp         # I/O primitives (Print/Scan/Clear/WaitForEnter)
-├── object/object.cpp     # Action implementations (GoWhere, Buy, etc.)
-├── center/center.cpp     # Announcement generation and display
-├── user/user.cpp         # Player health metrics (hunger, protein, etc.)
-└── test/test_module.cpp  # File I/O redirection for automated tests
+cmd/
+└── citylife/main.go          # Entry point
 
-include/
-└── [mirrors src/ structure with .h headers]
+internal/
+├── action/                   # Action implementations
+│   ├── action.go             # Action interface
+│   ├── actions.go            # Basic actions (GoWhere, CheckCash, etc.)
+│   ├── banking.go            # Bank operations
+│   ├── shopping.go           # Commodity purchases
+│   ├── medical.go            # Hospital actions
+│   └── save.go               # Save/Load actions
+├── game/state.go             # Game state aggregator
+├── world/                    # World management
+│   ├── world.go              # Time, money, location
+│   └── building.go           # Building definitions
+├── user/user.go              # User nutrition
+├── nutrition/manager.go      # Nutrition decay and interactions
+├── disease/manager.go        # Disease system
+├── food/                     # Food definitions
+├── medicine/medicine.go      # Medicine system
+├── checkup/checkup.go        # Medical checkups
+├── doctor/doctor.go          # Doctor diagnosis
+├── save/manager.go           # Save/load system
+├── path/manager.go           # Path utilities
+├── ui/model.go               # Bubble Tea UI
+├── center/center.go          # City center announcements
+├── mapview/mapview.go        # ASCII map rendering
+├── locale/locale.go          # i18n support
+└── testutil/                 # Test utilities
 
 tests/
-├── run_test.sh           # Automated test runner (filters random announcements)
-├── automated_input.txt   # Standard test scenario inputs
-├── automated_output.txt  # Expected outputs
-├── boundary_input.txt    # Edge case inputs (invalid choices, insufficient funds)
-└── boundary_output.txt   # Edge case expected outputs
+├── run_test.sh               # Integration test runner
+└── input/                    # Test input files
 ```
 
-## Coding Conventions (Inferred from Existing Code)
+## Coding Conventions
 
-- **Indentation:** 4 spaces (not tabs)
-- **Braces:** Allman style (opening brace on own line)
-- **Classes/Singletons:** `PascalCase` (e.g., `World`, `Controller`)
-- **Member functions:** `camelCase` (e.g., `GetInstance`, `ToDoIt`)
-- **C++ Standard:** C++11 (set in CMakeLists.txt)
-- **Naming:** Descriptive Chinese comments in headers (`@description`, `@param`, `@return`)
-- **Singleton Pattern:** Static `GetInstance()` method, private constructor, static `instance` member
+- **Indentation:** Tabs (Go standard)
+- **Naming:** Go conventions (CamelCase for exported, camelCase for internal)
+- **Packages:** Single-purpose packages in `internal/`
+- **Interfaces:** Small, focused interfaces (e.g., `Action`)
+- **Testing:** Table-driven tests with `*_test.go` files
+- **Comments:** Chinese comments acceptable, `@description`, `@param`, `@return` annotations
 
 ## Key Interfaces
 
-### Object Hierarchy
-```cpp
-class Object {
-    virtual std::string GetInfo();  // Returns display string (e.g., "Apple 5$")
-    virtual void ToDoIt();          // Executes action (e.g., updates world state)
-};
-
-// Example: GoWhere changes location, updates time, decreases hunger
-// Example: Commodity checks payment, updates User health, waits for Enter
+### Action Interface
+```go
+type Action interface {
+    Info() string                    // Display text
+    Execute(state interface{}) tea.Cmd // Execute action
+    Category() EventCategory         // For menu sorting
+}
 ```
 
 ### World Money API
-```cpp
-bool SpendMoney(int money);      // Returns false if insufficient funds
-bool DepositingMoney(int money); // Transfers money → bank
-bool WithdrawMoney(int money);   // Transfers bank → money, checks bank balance
+```go
+func (w *World) GetWalletTotal() int
+func (w *World) SpendMoney(amount int) bool
+func (w *World) AddMoney(amount int)
+func (w *World) DepositToBank(amount int) bool
+func (w *World) WithdrawFromBank(amount int) bool
 ```
 
-### View I/O
-```cpp
-void Print(const std::string &str);  // Output text
-int Scan();                          // Read valid integer (loops on error)
-void Clear();                        // Simulate clear screen with newlines
-void WaitForEnter();                 // Block until Enter key pressed
+### User Nutrition API
+```go
+func (u *User) GetNutrition(name string) int
+func (u *User) AddNutrition(name string, amount int)
+func (u *User) ConsumeNutrition(name string, amount int)
+func (u *User) IsAlive() bool
 ```
 
 ## Dependencies
 
-- **Linux:** ncurses (linked via CMake)
-- **Windows:** PDCurses 3.9 (configure include paths in CMakeLists.txt)
-- **Python Tests:** Python 3 with `pexpect` (for driving ncurses UI in tests)
+- **Go 1.21+**
+- **charmbracelet/bubbletea** - TUI framework
+- **charmbracelet/lipgloss** - Styling
 
 ## Common Pitfalls
 
-1. **Announcement Randomization:** Center announcements use `std::random_shuffle`, so output differs between runs. Tests must filter these lines.
-2. **Input Validation:** `View::Scan` loops infinitely until valid integer received. In test mode, ensure input files have enough valid numbers.
-3. **EOF Handling:** `View::Scan` throws `runtime_error("INPUT_EOF")` when input exhausted. Main catches this and exits with code 0.
-4. **Money vs Bank:** Player has two balances: `World::money` (wallet) and `Bank::deposit` (savings). Operations must specify which to use.
-5. **Health Clamping:** `User` health values capped at 100 via `std::min(current + delta, 100)` when consuming `Commodity`.
+1. **Nutrition Decay:** Happens on each action via `Nutrition.OnAction()`
+2. **Disease System:** Triggers based on nutrition thresholds
+3. **Menu Numbers:** 1-9 directly select items; 10+ requires arrow navigation
+4. **Save Path:** Uses `~/.citylife/saves/` cross-platform
+5. **Test Input:** Numbers 1-9 don't need Enter; other inputs do
+
+## Commit Guidelines
+
+- Commit messages can use Chinese or English
+- Keep messages concise (single sentence explaining the change)
+- Reference related issues with `#ID` when applicable
