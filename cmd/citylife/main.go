@@ -41,16 +41,13 @@ func main() {
 
 	// 启动服务器
 	log.Printf("CityLife API Server starting on :%s\n", *port)
-	log.Println("API文档:")
-	log.Println("  POST   /api/v1/sessions                    创建游戏会话")
-	log.Println("  GET    /api/v1/sessions/:id/state          获取游戏状态")
-	log.Println("  GET    /api/v1/sessions/:id/actions        获取可用行动")
-	log.Println("  POST   /api/v1/sessions/:id/actions        执行行动")
-	log.Println("  POST   /api/v1/sessions/:id/navigate/:loc  导航到位置")
-	log.Println("  POST   /api/v1/sessions/:id/bank/*         银行操作")
-	log.Println("  GET    /api/v1/sessions/:id/shop/*         购物")
-	log.Println("  POST   /api/v1/sessions/:id/hospital/*     医疗")
-	log.Println("  GET    /api/v1/sessions/:id/saves          存档")
+	log.Println("Base path: /api/v2")
+	if *debug {
+		log.Println("Registered routes:")
+		for _, rt := range r.Routes() {
+			log.Printf("  %-6s %s\n", rt.Method, rt.Path)
+		}
+	}
 
 	if err := r.Run(":" + *port); err != nil {
 		log.Fatalf("服务器启动失败: %v", err)

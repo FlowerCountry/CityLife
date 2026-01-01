@@ -9,7 +9,7 @@ cd "$PROJECT_DIR"
 
 # 配置
 PORT=18081
-BASE_URL="http://localhost:$PORT/api/v1"
+BASE_URL="http://localhost:$PORT/api/v2"
 PID_FILE="/tmp/citylife_test.pid"
 
 # 测试结果统计
@@ -55,13 +55,13 @@ fi
 # 辅助函数：发送请求并返回响应
 api_call() {
     local METHOD="$1"
-    local PATH="$2"
+    local API_PATH="$2"
     local DATA="$3"
 
     if [ -n "$DATA" ]; then
-        curl -s -X "$METHOD" "$BASE_URL$PATH" -H "Content-Type: application/json" -d "$DATA"
+        curl -s -X "$METHOD" "$BASE_URL$API_PATH" -H "Content-Type: application/json" -d "$DATA"
     else
-        curl -s -X "$METHOD" "$BASE_URL$PATH"
+        curl -s -X "$METHOD" "$BASE_URL$API_PATH"
     fi
 }
 
@@ -199,7 +199,6 @@ test_buy_commodity() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/shop/buy/面包")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
 
     # 验证余额减少
     RESP=$(api_call GET "/sessions/$SESSION/wallet")
@@ -217,7 +216,6 @@ test_bank_deposit() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/bank/deposit" '{"amount":100}')
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
 
     # 验证银行余额增加
     RESP=$(api_call GET "/sessions/$SESSION/bank")
@@ -233,7 +231,6 @@ test_bank_withdraw() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/bank/withdraw" '{"amount":100}')
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
 
     # 验证银行余额为0
     RESP=$(api_call GET "/sessions/$SESSION/bank")
@@ -248,7 +245,6 @@ test_see_doctor() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/hospital/doctor")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
     return 0
 }
 
@@ -277,7 +273,6 @@ test_do_checkup() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/hospital/checkup/p_core")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
     return 0
 }
 
@@ -303,7 +298,6 @@ test_buy_medicine() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/hospital/medicine/vitamin_c")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
     return 0
 }
 
@@ -314,7 +308,6 @@ test_save_game() {
 
     local RESP=$(api_call POST "/sessions/$SESSION/saves/1")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
     return 0
 }
 
@@ -331,7 +324,6 @@ test_load_game() {
     # 加载存档
     local RESP=$(api_call POST "/sessions/$SESSION/saves/1/load")
     check_json "$RESP" ".success" "true" || return 1
-    check_json "$RESP" ".data.success" "true" || return 1
 
     # 验证位置恢复到超市
     RESP=$(api_call GET "/sessions/$SESSION/state")

@@ -8,8 +8,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Build executable (outputs to bin/citylife)
 make build
 
-# Run the game
+# Run the API server (default port 8080)
 make run
+
+# Run with custom port
+./bin/citylife --port 3000
 
 # Run unit tests
 make test
@@ -32,9 +35,6 @@ make test
 
 # Run integration tests
 ./tests/run_test.sh
-
-# Test mode with file I/O
-./bin/citylife --test tests/input/basic_test.txt tests/output/output.txt
 ```
 
 **Test Scenarios (run_test.sh):**
@@ -43,13 +43,14 @@ make test
 
 ## Architecture Overview
 
-### Core Loop: `main → tea.Program → ui.Model → action.Execute`
+### Core Loop: `main → gin.Engine → handler → action.Execute`
 
 **Execution Flow:**
-1. **Entry** (`cmd/citylife/main.go`): Initializes path manager, parses args, creates game state
-2. **UI Loop** (`internal/ui/model.go`): Bubble Tea event loop handles keyboard input and renders UI
-3. **Actions** (`internal/action/`): Each action implements the Action interface with `Execute()` and `Info()`
-4. **State** (`internal/game/state.go`): Aggregates World, User, Nutrition, and Disease managers
+1. **Entry** (`cmd/citylife/main.go`): Initializes path manager, creates session manager, registers Gin routes
+2. **Router** (`internal/api/router.go`): Registers all API endpoints with middleware
+3. **Handlers** (`internal/api/handler/`): Process HTTP requests, interact with game state
+4. **Actions** (`internal/action/`): Each action implements the Action interface with `Execute()` returning `*Result`
+5. **State** (`internal/game/state.go`): Aggregates World, User, Nutrition, and Disease managers
 
 ### Data Flow & Ownership
 
@@ -61,10 +62,13 @@ make test
   - `Disease`: 6 disease types with triggers and cures
 
 **Key Packages:**
+- `internal/api/`: REST API layer (Gin handlers, middleware, response)
+- `internal/session/`: Session management (30-minute timeout)
+- `internal/action/`: Action interface and implementations
+- `internal/executor/`: Action execution orchestration
 - `internal/world/`: Time, money, buildings, wallet (6 denominations)
 - `internal/user/`: Nutrition management
-- `internal/action/`: Action interface and implementations (GoWhere, Commodity, Banking, Medical, Save/Load)
-- `internal/ui/`: Bubble Tea UI model
+- `internal/payment/`: Wallet and payment processing
 - `internal/food/`: 20+ food items with nutrition effects
 - `internal/medicine/`: OTC and prescription medicines
 - `internal/checkup/`: Medical checkup packages
@@ -74,15 +78,16 @@ make test
 
 ### Critical Design Decisions
 
-**1. Bubble Tea UI Framework**
-- TUI rendering handled by charmbracelet/bubbletea
-- Model-Update-View pattern
-- Keyboard navigation: 1-9 for menu items, arrows for scrolling
+**1. Gin REST API Framework**
+- RESTful API design with JSON responses
+- Session-based state management (UUID session IDs)
+- CORS middleware for cross-origin requests
+- Route group: `/api/v2/sessions/:session_id/*`
 
 **2. Action Interface Pattern**
-- All actions implement `Action` interface with `Execute()`, `Info()`, `Category()`
+- All actions implement `Action` interface with `ID()`, `Info()`, `Execute()`, `Category()`
 - Categories: Primary (shopping, banking), Insight (view status), Navigation (movement)
-- Actions sorted by category in menus
+- `Execute()` returns `*Result` with Message, Success, TimeElapsed
 
 **3. Wallet System (6 Denominations)**
 - 1, 5, 10, 20, 50, 100 yuan notes
@@ -93,46 +98,88 @@ make test
 - 3 save slots stored in `~/.citylife/saves/`
 - Serializes game state including World, User, Disease status
 
-**5. Test Mode**
-- `--test [input] [output]` redirects I/O for automation
-- Input format: `enter`, `up`, `down`, `1-9`, `q` commands
+**5. Session Management**
+- UUID-based session IDs
+- 30-minute idle timeout
+- Thread-safe session storage
+
+## API Endpoints
+
+```
+POST   /api/v2/sessions                         Create game session
+GET    /api/v2/sessions/:id                     Get session info
+DELETE /api/v2/sessions/:id                     Delete session
+GET    /api/v2/sessions/:id/state               Get full game state
+GET    /api/v2/sessions/:id/status              Get player status
+GET    /api/v2/sessions/:id/actions             Get available actions
+POST   /api/v2/sessions/:id/actions/:action_id  Execute action
+POST   /api/v2/sessions/:id/navigate/:loc       Navigate to location
+POST   /api/v2/sessions/:id/bank/*              Bank operations
+GET    /api/v2/sessions/:id/shop/*              Shopping (commodities)
+POST   /api/v2/sessions/:id/shop/*              Shopping (buy)
+GET    /api/v2/sessions/:id/hospital/*          Medical (lists)
+POST   /api/v2/sessions/:id/hospital/*          Medical (actions)
+GET    /api/v2/sessions/:id/saves               Save slots
+POST   /api/v2/sessions/:id/saves/*             Save/Load
+GET    /api/v2/sessions/:id/housing/*           Housing (status/offers)
+POST   /api/v2/sessions/:id/housing/*           Housing actions
+GET    /api/v2/sessions/:id/jobs                Job list
+POST   /api/v2/sessions/:id/jobs/:id            Do job
+GET    /api/v2/sessions/:id/restaurant/*        Restaurant menu
+POST   /api/v2/sessions/:id/restaurant/:id      Restaurant action
+GET    /api/v2/sessions/:id/park/*              Park activities
+POST   /api/v2/sessions/:id/park/:id            Park action
+GET    /api/v2/sessions/:id/hotel/*             Hotel services
+POST   /api/v2/sessions/:id/hotel/:id           Hotel action
+GET    /api/v2/sessions/:id/wallet              Wallet detail
+GET    /api/v2/sessions/:id/bank                Bank balance
+GET    /api/v2/sessions/:id/health              Health detail
+GET    /api/v2/sessions/:id/diseases            Disease status
+GET    /api/v2/sessions/:id/map                 Map locations
+```
 
 ## File Structure
 
 ```
 cmd/
-└── citylife/main.go          # Entry point
+└── citylife/main.go          # Entry point (Gin server)
 
 internal/
+├── api/                      # REST API layer
+│   ├── router.go             # Route registration
+│   ├── handler/              # Request handlers
+│   │   └── v2/                # v2 API handlers
+│   ├── middleware/           # CORS, session validation
+│   └── response/             # Unified JSON responses
+├── session/manager.go        # Session lifecycle
 ├── action/                   # Action implementations
 │   ├── action.go             # Action interface
-│   ├── actions.go            # Basic actions (GoWhere, CheckCash, etc.)
-│   ├── banking.go            # Bank operations
-│   ├── shopping.go           # Commodity purchases
-│   ├── medical.go            # Hospital actions
-│   └── save.go               # Save/Load actions
+│   └── actions.go            # Concrete actions
+├── executor/                 # Action execution
 ├── game/state.go             # Game state aggregator
 ├── world/                    # World management
 │   ├── world.go              # Time, money, location
 │   └── building.go           # Building definitions
 ├── user/user.go              # User nutrition
-├── nutrition/manager.go      # Nutrition decay and interactions
+├── nutrition/manager.go      # Nutrition decay
 ├── disease/manager.go        # Disease system
+├── payment/                  # Payment processing
+│   ├── cashier.go            # Transaction handling
+│   └── wallet_inspector.go   # Wallet queries
 ├── food/                     # Food definitions
 ├── medicine/medicine.go      # Medicine system
 ├── checkup/checkup.go        # Medical checkups
 ├── doctor/doctor.go          # Doctor diagnosis
 ├── save/manager.go           # Save/load system
 ├── path/manager.go           # Path utilities
-├── ui/model.go               # Bubble Tea UI
-├── center/center.go          # City center announcements
-├── mapview/mapview.go        # ASCII map rendering
+├── center/center.go          # City center
+├── mapview/mapview.go        # ASCII map
 ├── locale/locale.go          # i18n support
 └── testutil/                 # Test utilities
 
 tests/
 ├── run_test.sh               # Integration test runner
-└── input/                    # Test input files
+└── integration/              # Integration tests
 ```
 
 ## Coding Conventions
@@ -149,9 +196,16 @@ tests/
 ### Action Interface
 ```go
 type Action interface {
+    ID() string                      // Unique identifier
     Info() string                    // Display text
-    Execute(state interface{}) tea.Cmd // Execute action
-    Category() EventCategory         // For menu sorting
+    Execute(state *game.State) *Result // Execute action
+    Category() EventCategory         // For sorting
+}
+
+type Result struct {
+    Message     string
+    Success     bool
+    TimeElapsed int
 }
 ```
 
@@ -174,17 +228,17 @@ func (u *User) IsAlive() bool
 
 ## Dependencies
 
-- **Go 1.21+**
-- **charmbracelet/bubbletea** - TUI framework
-- **charmbracelet/lipgloss** - Styling
+- **Go 1.23+**
+- **github.com/gin-gonic/gin** - REST API framework
+- **github.com/google/uuid** - Session ID generation
 
 ## Common Pitfalls
 
 1. **Nutrition Decay:** Happens on each action via `Nutrition.OnAction()`
 2. **Disease System:** Triggers based on nutrition thresholds
-3. **Menu Numbers:** 1-9 directly select items; 10+ requires arrow navigation
+3. **Session Timeout:** Sessions expire after 30 minutes of inactivity
 4. **Save Path:** Uses `~/.citylife/saves/` cross-platform
-5. **Test Input:** Numbers 1-9 don't need Enter; other inputs do
+5. **CORS:** Enabled by default for all origins
 
 ## Commit Guidelines
 
