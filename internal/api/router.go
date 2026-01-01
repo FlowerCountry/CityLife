@@ -2,7 +2,7 @@
 package api
 
 import (
-	"citylife/internal/api/handler"
+	handlerv2 "citylife/internal/api/handler/v2"
 	"citylife/internal/api/middleware"
 	"citylife/internal/session"
 
@@ -14,70 +14,94 @@ func RegisterRoutes(r *gin.Engine, sm *session.Manager) {
 	// 全局中间件
 	r.Use(middleware.CORS())
 
-	// API v1
-	v1 := r.Group("/api/v1")
+	// API v2
+	v2 := r.Group("/api/v2")
 
-	// Session管理（不需要验证）
-	v1.POST("/sessions", handler.CreateSession(sm))
+	v2.POST("/sessions", handlerv2.CreateSession(sm))
 
-	// 需要Session验证的路由
-	sessionGroup := v1.Group("/sessions/:session_id")
-	sessionGroup.Use(middleware.RequireSession(sm))
+	v2Session := v2.Group("/sessions/:session_id")
+	v2Session.Use(middleware.RequireSession(sm))
 	{
-		// Session基础
-		sessionGroup.GET("", handler.GetSession(sm))
-		sessionGroup.DELETE("", handler.DeleteSession(sm))
+		v2Session.GET("", handlerv2.GetSession(sm))
+		v2Session.DELETE("", handlerv2.DeleteSession(sm))
 
-		// 游戏状态
-		sessionGroup.GET("/state", handler.GetState)
-		sessionGroup.GET("/status", handler.GetStatus)
+		v2Session.GET("/state", handlerv2.GetState)
+		v2Session.GET("/status", handlerv2.GetStatus)
 
-		// 行动系统
-		sessionGroup.GET("/actions", handler.GetActions)
-		sessionGroup.POST("/actions", handler.ExecuteAction)
+		v2Session.GET("/actions", handlerv2.GetActions)
+		v2Session.POST("/actions/:action_id", handlerv2.ExecuteAction)
 
-		// 导航
-		sessionGroup.POST("/navigate/:location_id", handler.Navigate)
+		v2Session.POST("/navigate/:location_id", handlerv2.Navigate)
 
-		// 银行操作
-		bank := sessionGroup.Group("/bank")
+		bank := v2Session.Group("/bank")
 		{
-			bank.POST("/deposit", handler.Deposit)
-			bank.POST("/withdraw", handler.Withdraw)
-			bank.POST("/deposit-all", handler.DepositAll)
-			bank.POST("/withdraw-all", handler.WithdrawAll)
+			bank.POST("/deposit", handlerv2.Deposit)
+			bank.POST("/withdraw", handlerv2.Withdraw)
+			bank.POST("/deposit-all", handlerv2.DepositAll)
+			bank.POST("/withdraw-all", handlerv2.WithdrawAll)
 		}
 
-		// 购物
-		shop := sessionGroup.Group("/shop")
+		shop := v2Session.Group("/shop")
 		{
-			shop.GET("/commodities", handler.GetCommodities)
-			shop.POST("/buy/:commodity", handler.BuyCommodity)
+			shop.GET("/commodities", handlerv2.GetCommodities)
+			shop.POST("/buy/:commodity", handlerv2.BuyCommodity)
 		}
 
-		// 医疗
-		hospital := sessionGroup.Group("/hospital")
+		hospital := v2Session.Group("/hospital")
 		{
-			hospital.POST("/doctor", handler.SeeDoctor)
-			hospital.GET("/checkups", handler.GetCheckups)
-			hospital.POST("/checkup/:id", handler.DoCheckup)
-			hospital.GET("/medicines", handler.GetMedicines)
-			hospital.POST("/medicine/:id", handler.BuyMedicine)
+			hospital.POST("/doctor", handlerv2.SeeDoctor)
+			hospital.GET("/checkups", handlerv2.GetCheckups)
+			hospital.POST("/checkup/:id", handlerv2.DoCheckup)
+			hospital.GET("/medicines", handlerv2.GetMedicines)
+			hospital.POST("/medicine/:id", handlerv2.BuyMedicine)
 		}
 
-		// 存档
-		saves := sessionGroup.Group("/saves")
+		saves := v2Session.Group("/saves")
 		{
-			saves.GET("", handler.GetSaveSlots)
-			saves.POST("/:slot", handler.SaveGame)
-			saves.POST("/:slot/load", handler.LoadGame)
+			saves.GET("", handlerv2.GetSaveSlots)
+			saves.POST("/:slot", handlerv2.SaveGame)
+			saves.POST("/:slot/load", handlerv2.LoadGame)
 		}
 
-		// 查看
-		sessionGroup.GET("/wallet", handler.GetWallet)
-		sessionGroup.GET("/bank", handler.GetBankBalance)
-		sessionGroup.GET("/health", handler.GetHealth)
-		sessionGroup.GET("/diseases", handler.GetDiseases)
-		sessionGroup.GET("/map", handler.GetMap)
+		housing := v2Session.Group("/housing")
+		{
+			housing.GET("", handlerv2.GetHousing)
+			housing.GET("/offers", handlerv2.GetHousingOffers)
+			housing.POST("/rent/:level", handlerv2.RentHousing)
+			housing.POST("/buy/:level", handlerv2.BuyHousing)
+			housing.POST("/renew", handlerv2.RenewRent)
+			housing.POST("/cancel", handlerv2.CancelRent)
+			housing.POST("/go-home", handlerv2.GoHome)
+			housing.POST("/leave-home", handlerv2.LeaveHome)
+			housing.POST("/sleep", handlerv2.SleepAtHome)
+		}
+
+		jobs := v2Session.Group("/jobs")
+		{
+			jobs.GET("", handlerv2.GetJobs)
+			jobs.POST("/:id", handlerv2.DoJob)
+		}
+
+		restaurant := v2Session.Group("/restaurant")
+		{
+			restaurant.GET("/menu", handlerv2.GetRestaurantMenu)
+			restaurant.POST("/:id", handlerv2.DoRestaurant)
+		}
+		park := v2Session.Group("/park")
+		{
+			park.GET("/activities", handlerv2.GetParkActivities)
+			park.POST("/:id", handlerv2.DoPark)
+		}
+		hotel := v2Session.Group("/hotel")
+		{
+			hotel.GET("/services", handlerv2.GetHotelServices)
+			hotel.POST("/:id", handlerv2.DoHotel)
+		}
+
+		v2Session.GET("/wallet", handlerv2.GetWallet)
+		v2Session.GET("/bank", handlerv2.GetBankBalance)
+		v2Session.GET("/health", handlerv2.GetHealth)
+		v2Session.GET("/diseases", handlerv2.GetDiseases)
+		v2Session.GET("/map", handlerv2.GetMap)
 	}
 }
