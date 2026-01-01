@@ -133,14 +133,23 @@ type DiseaseInfo struct {
 	TreatmentCost int    `json:"treatment_cost"`
 }
 
+// HousingInfo 住房信息
+type HousingInfo struct {
+	Status               string `json:"status"` // none|rented|owned
+	Level                int    `json:"level"`  // 0-3
+	Name                 string `json:"name"`
+	RentRemainingSeconds int    `json:"rent_remaining_seconds,omitempty"`
+}
+
 // StateResponse 游戏状态响应
 type StateResponse struct {
-	Location LocationInfo          `json:"location"`
-	Time     TimeInfo              `json:"time"`
-	Money    MoneyInfo             `json:"money"`
-	Health   map[string]int        `json:"health"`
-	Diseases []DiseaseInfo         `json:"diseases"`
-	IsAlive  bool                  `json:"is_alive"`
+	Location LocationInfo   `json:"location"`
+	Time     TimeInfo       `json:"time"`
+	Money    MoneyInfo      `json:"money"`
+	Housing  HousingInfo    `json:"housing"`
+	Health   map[string]int `json:"health"`
+	Diseases []DiseaseInfo  `json:"diseases"`
+	IsAlive  bool           `json:"is_alive"`
 }
 
 // ActionInfo 可用行动信息
@@ -180,9 +189,9 @@ type MedicineInfo struct {
 
 // CheckupInfo 体检项目信息
 type CheckupInfo struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Price int    `json:"price"`
+	ID    string   `json:"id"`
+	Name  string   `json:"name"`
+	Price int      `json:"price"`
 	Items []string `json:"items"`
 }
 
@@ -195,6 +204,6 @@ type SaveSlotInfo struct {
 
 // WalletInfo 钱包详情
 type WalletInfo struct {
-	Total       int            `json:"total"`
-	Denominations map[int]int  `json:"denominations"`
+	Total         int         `json:"total"`
+	Denominations map[int]int `json:"denominations"`
 }
