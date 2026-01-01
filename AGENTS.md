@@ -1,21 +1,40 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-CityLife is built as a modular C++11 project. Gameplay sources live in `src/`, grouped by feature folders such as `center/`, `controller/`, `food/`, and `world/`; matching headers sit under `include/` with the same directory layout. Build artifacts are emitted to `bin/` and `build/`, while automation scripts and Python acceptance tests (`test_game.py`, `test_game_detailed.py`, `test_game_visual.py`) remain in the repository root.
+- `cmd/citylife/` holds the entry point for the Gin-based API server.
+- `internal/` contains game logic and API layers (e.g., `internal/api`, `internal/action`, `internal/world`, `internal/user`, `internal/save`).
+- `tests/` hosts integration scripts such as `tests/run_test.sh`.
+- `docs/`, `locale/`, and `bin/` store documentation, localization files, and build outputs.
 
 ## Build, Test, and Development Commands
-Run `cmake -S . -B build` to configure the project, and `cmake --build build` to compile and place the executable at `bin/main`. Use `./bin/main` for manual play-throughs. Execute `python3 test_game.py` for the default automated journey, `python3 test_game_detailed.py` when you need verbose logging, and `./run_visual_test.sh` to capture a full ncurses session in `game_test_output.txt`.
+Use the Makefile for common tasks:
+
+- `make deps`: tidy Go module dependencies.
+- `make build`: build the binary to `bin/citylife`.
+- `make run`: build and run the server on the default port (8080).
+- `make test`: run unit tests (`go test ./...`).
+- `make fmt`: format Go code (`go fmt ./...`).
+- `make vet`: run `go vet` checks.
+- `make build-all`: cross-platform builds.
+
+You can also run directly, e.g. `./bin/citylife --port 3000 --debug`.
 
 ## Coding Style & Naming Conventions
-Match the existing four-space indentation and Allman brace placement (`brace on its own line`). Classes and singletons use `PascalCase` (e.g., `World`, `Controller`), member functions use `camelCase`, and free functions or utilities follow the same pattern. Files and directories stay lowercase with underscores only when readability requires it. Prefer `std::` facilities over raw pointers unless ownership or ncurses integration demands otherwise, and mirror every new `.cpp` with a public header in `include/` when symbols must be shared.
-You should put the c++ lib to the .h file, and put this project lib to .cpp file
-When you create a new function, you should write the information of it, about the args, return, and more
+- Follow Go conventions: tabs for indentation, `CamelCase` for exported symbols, `camelCase` for internal ones.
+- Keep functions small and single-purpose; avoid deep nesting.
+- Format before committing with `make fmt`; keep comments concise (Chinese is acceptable).
+- Test files should use `*_test.go` naming.
 
 ## Testing Guidelines
-Our Python harness relies on `pexpect` to drive the ncurses UI; keep timing-sensitive flows resilient by avoiding unnecessary output changes inside scripted paths. When adding tests, mirror the naming scheme (`test_game_<focus>.py`) and ensure each script exits cleanly via `child.sendcontrol('c')` after assertions. For manual verification, include the resulting snippet from `game_test_output.txt` or terminal captures in the PR description whenever behaviour changes.
+- Unit tests: `make test`.
+- Integration tests: `./tests/run_test.sh` (requires `curl` and `jq`, starts a local server on port 18081).
+- Add new tests for gameplay actions or API handlers you touch.
 
 ## Commit & Pull Request Guidelines
-Recent history mixes English and Chinese summaries (e.g., `更改变量传入类型 增加食物类`); keep using a single concise sentence that explains the change. Reference related issues with `#ID` when applicable. Pull requests should summarise the scenario, list the commands run (build + relevant tests), and attach screenshots or log excerpts for gameplay-affecting tweaks. Highlight compatibility considerations such as ncurses version expectations or changes to scripted key sequences.
+- Commit messages are concise single-line subjects; optional type prefixes like `feat:` or `chore:` are common.
+- Chinese or English subjects are acceptable; include issue references when relevant.
+- PRs should include: a short summary, tests run, and any API or save-data changes.
 
-## Dependencies & Environment
-Linux builds link against `ncurses`; Windows contributors must configure PDCurses 3.9 and match the include paths defined in `CMakeLists.txt`. Ensure Python 3 with `pexpect` is available before running automated tests. Document any new external requirement in `readme.md` and update the scripts if the executable path changes from the default `bin/main`.
+## Runtime & Data Notes
+- Default server port is 8080; flags include `--port` and `--debug`.
+- Save data is managed by the path manager; keep changes backward compatible.
