@@ -51,9 +51,9 @@ func TestUpdateFreshness(t *testing.T) {
 	}{
 		{"新鲜食品1小时", FoodTypeFresh, 60, 96},       // 100 - 4.0 = 96
 		{"新鲜食品6小时", FoodTypeFresh, 360, 76},      // 100 - 24 = 76
-		{"饮料1小时", FoodTypeBeverage, 60, 98},        // 100 - 2.0 = 98
+		{"饮料1小时", FoodTypeBeverage, 60, 98},      // 100 - 2.0 = 98
 		{"加工食品1小时", FoodTypeProcessed, 60, 99},   // 100 - 1.0 = 99
-		{"罐头1小时", FoodTypeCanned, 60, 99},          // 100 - 0.1 ≈ 99
+		{"罐头1小时", FoodTypeCanned, 60, 99},        // 100 - 0.1 ≈ 99
 		{"新鲜食品25小时完全腐烂", FoodTypeFresh, 1500, 0}, // 100 - 100 = 0
 	}
 

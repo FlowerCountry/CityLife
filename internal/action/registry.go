@@ -2,11 +2,12 @@
 package action
 
 import (
+	"citylife/internal/game"
 	"citylife/internal/world"
 )
 
 // GetActionsForLocation 获取指定位置的行动列表
-func GetActionsForLocation(location int) []Action {
+func GetActionsForLocation(state *game.State, location int) []Action {
 	actions := []Action{}
 
 	// 添加导航行动
@@ -26,6 +27,7 @@ func GetActionsForLocation(location int) []Action {
 		actions = append(actions, &InformationAction{})
 		actions = append(actions, &ViewMapAction{})
 		actions = append(actions, &ViewHealthAction{})
+		actions = append(actions, &ViewHousingAction{})
 		actions = append(actions, &ViewSaveSlotsAction{})
 		actions = append(actions, &SaveMenuAction{})
 		actions = append(actions, &LoadMenuAction{})
@@ -56,6 +58,40 @@ func GetActionsForLocation(location int) []Action {
 		actions = append(actions, &MedicineMenuAction{})
 		actions = append(actions, &ViewDiseaseAction{})
 		actions = append(actions, &ViewHealthAction{})
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationResidentialArea:
+		actions = append(actions, &ViewHousingAction{})
+		if state.World.Housing.HasHome() {
+			actions = append(actions, &GoHomeAction{})
+		}
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationHome:
+		actions = append(actions, &ViewHousingAction{})
+		actions = append(actions, &SleepAtHomeAction{})
+		actions = append(actions, &LeaveHomeAction{})
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationRealEstateAgency:
+		actions = append(actions, &ViewHousingAction{})
+		actions = append(actions, buildHousingMarketActions(state)...)
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationJobMarket:
+		actions = append(actions, GetJobActions()...)
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationRestaurant:
+		actions = append(actions, GetRestaurantActions()...)
+		actions = append(actions, &CheckCashAction{})
+
+	case world.LocationPark:
+		actions = append(actions, GetParkActions()...)
+		actions = append(actions, &ViewHealthAction{})
+
+	case world.LocationHotel:
+		actions = append(actions, GetHotelActions()...)
 		actions = append(actions, &CheckCashAction{})
 	}
 

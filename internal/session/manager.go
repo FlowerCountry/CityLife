@@ -12,11 +12,11 @@ import (
 
 // Session 游戏会话
 type Session struct {
-	ID        string       `json:"id"`
-	State     *game.State  `json:"-"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
-	ExpiresAt time.Time    `json:"expires_at"`
+	ID        string      `json:"id"`
+	State     *game.State `json:"-"`
+	CreatedAt time.Time   `json:"created_at"`
+	UpdatedAt time.Time   `json:"updated_at"`
+	ExpiresAt time.Time   `json:"expires_at"`
 }
 
 // Manager Session管理器

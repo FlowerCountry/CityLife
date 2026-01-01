@@ -404,7 +404,8 @@ func TestGetAvailablePrescriptions(t *testing.T) {
 // ========== 医院行动集成测试 ==========
 
 func TestHospitalActionsRegistered(t *testing.T) {
-	actions := GetActionsForLocation(world.LocationHospital)
+	state := newTestGameState()
+	actions := GetActionsForLocation(state, world.LocationHospital)
 
 	// 检查必要的行动存在
 	hasSeeDoctorAction := false

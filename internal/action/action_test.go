@@ -3,17 +3,18 @@ package action
 import (
 	"testing"
 
+	"citylife/internal/game"
 	"citylife/internal/world"
 )
 
 func TestSortActions(t *testing.T) {
 	// 创建不同类别的行动
 	actions := []Action{
-		&CheckCashAction{},            // Insight
-		&GoWhereAction{TargetID: 1},   // Navigation
-		&EnterSupermarketAction{},     // Primary
-		&ViewMapAction{},              // Insight
-		&InformationAction{},          // Insight
+		&CheckCashAction{},          // Insight
+		&GoWhereAction{TargetID: 1}, // Navigation
+		&EnterSupermarketAction{},   // Primary
+		&ViewMapAction{},            // Insight
+		&InformationAction{},        // Insight
 	}
 
 	sorted := SortActions(actions)
@@ -84,6 +85,8 @@ func TestActionInfo(t *testing.T) {
 }
 
 func TestGetActionsForLocation(t *testing.T) {
+	state := game.New()
+
 	tests := []struct {
 		location int
 		minCount int
@@ -97,7 +100,7 @@ func TestGetActionsForLocation(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run("", func(t *testing.T) {
-			actions := GetActionsForLocation(tt.location)
+			actions := GetActionsForLocation(state, tt.location)
 			if len(actions) < tt.minCount {
 				t.Errorf("Location %d: got %d actions, want >= %d",
 					tt.location, len(actions), tt.minCount)

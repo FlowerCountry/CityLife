@@ -8,7 +8,9 @@ import (
 )
 
 // DepositAction 存款行动
-type DepositAction struct{}
+type DepositAction struct {
+	Amount int
+}
 
 func (a *DepositAction) ID() string {
 	return "deposit"
@@ -19,17 +21,26 @@ func (a *DepositAction) Info() string {
 }
 
 func (a *DepositAction) Execute(state *game.State) *Result {
+	amount := a.Amount
+	if amount <= 0 {
+		amount = 100
+	}
+
 	walletTotal := state.World.GetWalletTotal()
 
-	if walletTotal < 100 {
+	if amount%100 != 0 {
 		return &Result{
-			Message: fmt.Sprintf("存款失败！现金不足100元（当前: %d元）\n银行存取款必须以100元为单位", walletTotal),
+			Message: fmt.Sprintf("存款失败！金额必须是100元的倍数（请求: %d元）", amount),
 			Success: false,
 		}
 	}
 
-	// 存款（默认存100元）
-	amount := 100
+	if walletTotal < amount {
+		return &Result{
+			Message: fmt.Sprintf("存款失败！现金不足（需要: %d元，当前: %d元）\n银行存取款必须以100元为单位", amount, walletTotal),
+			Success: false,
+		}
+	}
 
 	err := state.World.Deposit(amount)
 	if err != nil {
@@ -51,7 +62,9 @@ func (a *DepositAction) Category() EventCategory {
 }
 
 // WithdrawAction 取款行动
-type WithdrawAction struct{}
+type WithdrawAction struct {
+	Amount int
+}
 
 func (a *WithdrawAction) ID() string {
 	return "withdraw"
@@ -62,17 +75,26 @@ func (a *WithdrawAction) Info() string {
 }
 
 func (a *WithdrawAction) Execute(state *game.State) *Result {
+	amount := a.Amount
+	if amount <= 0 {
+		amount = 100
+	}
+
 	bankBalance := state.World.BankDeposit
 
-	if bankBalance < 100 {
+	if amount%100 != 0 {
 		return &Result{
-			Message: fmt.Sprintf("取款失败！银行余额不足100元（当前: %d元）\n银行存取款必须以100元为单位", bankBalance),
+			Message: fmt.Sprintf("取款失败！金额必须是100元的倍数（请求: %d元）", amount),
 			Success: false,
 		}
 	}
 
-	// 取款100元
-	amount := 100
+	if bankBalance < amount {
+		return &Result{
+			Message: fmt.Sprintf("取款失败！银行余额不足（需要: %d元，当前: %d元）\n银行存取款必须以100元为单位", amount, bankBalance),
+			Success: false,
+		}
+	}
 
 	err := state.World.Withdraw(amount)
 	if err != nil {

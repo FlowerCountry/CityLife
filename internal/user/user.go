@@ -62,8 +62,8 @@ func init() {
 
 // User 用户状态
 type User struct {
-	Nutrition map[string]int    // 营养值
-	Diagnoses map[string]bool   // 已诊断的疾病
+	Nutrition map[string]int  // 营养值
+	Diagnoses map[string]bool // 已诊断的疾病
 }
 
 // New 创建新用户

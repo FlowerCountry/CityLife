@@ -27,6 +27,7 @@ type World struct {
 	// 位置
 	Where     int         // 当前位置ID
 	Buildings []*Building // 所有建筑
+	Housing   Housing     // 住房状态（租/买）
 
 	// 金钱
 	Wallet      [6]int  // 钱包：各面值数量 [100, 50, 20, 10, 5, 1]
@@ -206,6 +207,9 @@ func (w *World) UpdateTime(seconds int) {
 		}
 		daysInMonth = w.getDaysInMonth()
 	}
+
+	// 推进租房剩余时间
+	w.Housing.Advance(seconds)
 }
 
 // getDaysInMonth 获取当前月份的天数

@@ -40,6 +40,11 @@ type WorldData struct {
 	Where       int    `json:"where"`
 	Wallet      [6]int `json:"wallet"`
 	BankDeposit int    `json:"bank_deposit"`
+
+	// 住房状态（v2新增）
+	HousingStatus        int `json:"housing_status"`
+	HousingLevel         int `json:"housing_level"`
+	RentRemainingSeconds int `json:"rent_remaining_seconds"`
 }
 
 // UserData 用户存档数据
@@ -56,7 +61,7 @@ type DiseaseData struct {
 }
 
 const (
-	CurrentVersion = 1
+	CurrentVersion = 2
 	MaxSlots       = 3
 )
 

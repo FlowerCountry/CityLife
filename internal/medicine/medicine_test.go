@@ -272,12 +272,12 @@ func TestPrescriptionDiseaseMapping(t *testing.T) {
 	m := NewManager()
 
 	mapping := map[string]string{
-		"cold_medicine":        "cold",
-		"blood_tonic":          "anemia",
-		"vitamin_c_injection":  "scurvy",
-		"antidiarrheal":        "food_poisoning",
-		"nutrition_booster":    "malnutrition",
-		"antidepressant":       "depression",
+		"cold_medicine":       "cold",
+		"blood_tonic":         "anemia",
+		"vitamin_c_injection": "scurvy",
+		"antidiarrheal":       "food_poisoning",
+		"nutrition_booster":   "malnutrition",
+		"antidepressant":      "depression",
 	}
 
 	for medID, diseaseID := range mapping {

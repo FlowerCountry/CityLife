@@ -56,11 +56,11 @@ func TestGetWalletTotal(t *testing.T) {
 
 func TestSpendMoney(t *testing.T) {
 	tests := []struct {
-		name           string
-		wallet         [6]int
-		amount         int
-		wantErr        bool
-		wantWallet     [6]int
+		name       string
+		wallet     [6]int
+		amount     int
+		wantErr    bool
+		wantWallet [6]int
 	}{
 		{
 			name:       "花费5元",
@@ -120,12 +120,12 @@ func TestSpendMoney(t *testing.T) {
 
 func TestDeposit(t *testing.T) {
 	tests := []struct {
-		name        string
-		wallet      [6]int
-		bank        int
-		amount      int
-		wantErr     bool
-		wantBank    int
+		name     string
+		wallet   [6]int
+		bank     int
+		amount   int
+		wantErr  bool
+		wantBank int
 	}{
 		{
 			name:     "存款100元",
@@ -175,11 +175,11 @@ func TestDeposit(t *testing.T) {
 
 func TestWithdraw(t *testing.T) {
 	tests := []struct {
-		name        string
-		bank        int
-		amount      int
-		wantErr     bool
-		wantBank    int
+		name     string
+		bank     int
+		amount   int
+		wantErr  bool
+		wantBank int
 	}{
 		{
 			name:     "取款100元",
@@ -415,11 +415,11 @@ func TestGetDistance(t *testing.T) {
 		to       int
 		expected int
 	}{
-		{LocationCityCenter, LocationSupermarket, 5},   // dx=1, dy=0 -> 1*5=5
-		{LocationCityCenter, LocationBank, 5},          // dx=0, dy=1 -> 1*5=5
-		{LocationCityCenter, LocationHospital, 10},     // dx=1, dy=1 -> 2*5=10
-		{LocationSupermarket, LocationBank, 10},        // dx=1, dy=1 -> 2*5=10
-		{LocationSupermarket, LocationSupermarket, 5},  // 同位置，距离为1*5=5
+		{LocationCityCenter, LocationSupermarket, 5},  // dx=1, dy=0 -> 1*5=5
+		{LocationCityCenter, LocationBank, 5},         // dx=0, dy=1 -> 1*5=5
+		{LocationCityCenter, LocationHospital, 10},    // dx=1, dy=1 -> 2*5=10
+		{LocationSupermarket, LocationBank, 10},       // dx=1, dy=1 -> 2*5=10
+		{LocationSupermarket, LocationSupermarket, 5}, // 同位置，距离为1*5=5
 	}
 
 	for _, tt := range tests {

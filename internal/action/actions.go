@@ -234,36 +234,40 @@ func (a *ViewMapAction) Info() string {
 }
 
 func (a *ViewMapAction) Execute(state *game.State) *Result {
-	currentLoc := state.World.Where
-
-	mapStr := `
-══════════ 城市地图 ══════════
-
-     [医院]
-        │
-        │
-  [银行]─┼─[超市]
-        │
-        │
-     [市中心]
-
-══════════════════════════════
-`
-	// 标记当前位置
-	locationMarkers := map[int]string{
-		world.LocationCityCenter:  "市中心",
-		world.LocationSupermarket: "超市",
-		world.LocationBank:        "银行",
-		world.LocationHospital:    "医院",
+	current := state.World.CurrentLocation()
+	if current == nil {
+		return &Result{Message: "当前位置未知", Success: false}
 	}
 
-	currentName := locationMarkers[currentLoc]
-	msg := mapStr + fmt.Sprintf("\n  当前位置: 【%s】", currentName)
-
-	return &Result{
-		Message: msg,
-		Success: true,
+	adjacentIDs := world.GetAdjacentBuildings(state.World.Where)
+	adjacentNames := make([]string, 0, len(adjacentIDs))
+	for _, id := range adjacentIDs {
+		if id >= 0 && id < len(world.BuildingNames) {
+			adjacentNames = append(adjacentNames, world.BuildingNames[id])
+		}
 	}
+
+	publicNames := make([]string, 0, len(state.World.Buildings))
+	for _, b := range state.World.Buildings {
+		if b == nil || b.IsInterior {
+			continue
+		}
+		publicNames = append(publicNames, b.Name)
+	}
+
+	var msg strings.Builder
+	msg.WriteString("══════ 城市地图 ══════\n\n")
+	msg.WriteString(fmt.Sprintf("  当前位置: 【%s】\n", current.Name))
+	if len(adjacentNames) > 0 {
+		msg.WriteString(fmt.Sprintf("  可前往: %s\n", strings.Join(adjacentNames, "、")))
+	} else {
+		msg.WriteString("  可前往: 无\n")
+	}
+	msg.WriteString("\n  公共地点: " + strings.Join(publicNames, "、") + "\n")
+	msg.WriteString("\n  提示: 部分室内地点需要通过特定行动进入。\n")
+	msg.WriteString("\n══════════════════════")
+
+	return &Result{Message: msg.String(), Success: true}
 }
 
 func (a *ViewMapAction) Category() EventCategory {

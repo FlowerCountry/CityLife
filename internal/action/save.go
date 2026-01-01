@@ -8,6 +8,7 @@ import (
 	"citylife/internal/disease"
 	"citylife/internal/game"
 	"citylife/internal/save"
+	"citylife/internal/world"
 )
 
 // SaveGameAction 保存游戏行动
@@ -36,15 +37,18 @@ func (a *SaveGameAction) Execute(state *game.State) *Result {
 	// 构建存档数据
 	saveData := &save.SaveData{
 		World: save.WorldData{
-			Year:        state.World.Year,
-			Month:       state.World.Month,
-			Day:         state.World.Day,
-			Hour:        state.World.Hour,
-			Minute:      state.World.Minute,
-			Second:      state.World.Second,
-			Where:       state.World.Where,
-			Wallet:      state.World.Wallet,
-			BankDeposit: state.World.BankDeposit,
+			Year:                 state.World.Year,
+			Month:                state.World.Month,
+			Day:                  state.World.Day,
+			Hour:                 state.World.Hour,
+			Minute:               state.World.Minute,
+			Second:               state.World.Second,
+			Where:                state.World.Where,
+			Wallet:               state.World.Wallet,
+			BankDeposit:          state.World.BankDeposit,
+			HousingStatus:        int(state.World.Housing.Status),
+			HousingLevel:         int(state.World.Housing.Level),
+			RentRemainingSeconds: state.World.Housing.RentRemainingSeconds,
 		},
 		User: save.UserData{
 			Nutrition: state.User.GetAllNutrition(),
@@ -112,6 +116,12 @@ func (a *LoadGameAction) Execute(state *game.State) *Result {
 	state.World.Where = saveData.World.Where
 	state.World.Wallet = saveData.World.Wallet
 	state.World.BankDeposit = saveData.World.BankDeposit
+	state.World.Housing.Status = world.HousingStatus(saveData.World.HousingStatus)
+	state.World.Housing.Level = world.HomeLevel(saveData.World.HousingLevel)
+	state.World.Housing.RentRemainingSeconds = saveData.World.RentRemainingSeconds
+	if !state.World.Housing.HasHome() {
+		state.World.Housing.Clear()
+	}
 
 	// 恢复用户状态
 	state.User.SetAllNutrition(saveData.User.Nutrition)
@@ -211,15 +221,18 @@ func (a *SaveMenuAction) Execute(state *game.State) *Result {
 	// 构建存档数据
 	saveData := &save.SaveData{
 		World: save.WorldData{
-			Year:        state.World.Year,
-			Month:       state.World.Month,
-			Day:         state.World.Day,
-			Hour:        state.World.Hour,
-			Minute:      state.World.Minute,
-			Second:      state.World.Second,
-			Where:       state.World.Where,
-			Wallet:      state.World.Wallet,
-			BankDeposit: state.World.BankDeposit,
+			Year:                 state.World.Year,
+			Month:                state.World.Month,
+			Day:                  state.World.Day,
+			Hour:                 state.World.Hour,
+			Minute:               state.World.Minute,
+			Second:               state.World.Second,
+			Where:                state.World.Where,
+			Wallet:               state.World.Wallet,
+			BankDeposit:          state.World.BankDeposit,
+			HousingStatus:        int(state.World.Housing.Status),
+			HousingLevel:         int(state.World.Housing.Level),
+			RentRemainingSeconds: state.World.Housing.RentRemainingSeconds,
 		},
 		User: save.UserData{
 			Nutrition: state.User.GetAllNutrition(),
@@ -302,6 +315,12 @@ func (a *LoadMenuAction) Execute(state *game.State) *Result {
 	state.World.Where = saveData.World.Where
 	state.World.Wallet = saveData.World.Wallet
 	state.World.BankDeposit = saveData.World.BankDeposit
+	state.World.Housing.Status = world.HousingStatus(saveData.World.HousingStatus)
+	state.World.Housing.Level = world.HomeLevel(saveData.World.HousingLevel)
+	state.World.Housing.RentRemainingSeconds = saveData.World.RentRemainingSeconds
+	if !state.World.Housing.HasHome() {
+		state.World.Housing.Clear()
+	}
 
 	// 恢复用户状态
 	state.User.SetAllNutrition(saveData.User.Nutrition)
